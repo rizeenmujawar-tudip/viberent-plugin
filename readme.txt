@@ -4,10 +4,10 @@ Author: Rizeen
 Author URI: https://github.com/rizeenmujawar-tudip/viberent-plugin
 Plugin URI: https://wordpress.org/plugins/login-to-viberent
 Tags: viberent, login to viberent, ecommerce, quote, quotation, add to cart, place order, category, available, availability, rental period, dates, from, to, page number, api, booking
-Requires at least: 5.0
-Tested up to: 5.6
-Requires PHP: 5.6
-Stable tag: 6.26
+Requires at least: 7.0
+Tested up to: 8.0.12
+Requires PHP: 8.0
+Stable tag: 0.1
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -22,7 +22,7 @@ Login To Viberent is a plugin created to fetch product details from viberent sys
 
 == Requirements: ==
 
-* PHP 5.3 or greater
+* PHP 7.0 or greater
 * MySQL 5.0 or greater
 * PHP mbstring extension
 * PHP cURL extension (recommended)
