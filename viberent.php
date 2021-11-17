@@ -3,11 +3,11 @@
  * Login To Viberent
  * 
  * Plugin Name: Login To Viberent
- * Plugin URI: 
+ * Plugin URI: https://wordpress.org/plugins/login-to-viberent
  * Description: Login
  * Version: 1.0
  * Author: Rizeen
- * Author URI: 
+ * Author URI: https://github.com/rizeenmujawar-tudip/viberent-plugin
  * License: GPLv2 or later
  * Text Domain: viberent login
 */
