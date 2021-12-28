@@ -823,7 +823,6 @@ if (isset($_SESSION["cart_item"])) {
         <p class="font-italic text-muted">This loading window will be removed after <strong class="countdown text-dark font-weight-bold">3 </strong> Seconds</p>
       </div>
     </div>
-  </body>
 
 
 <?php
