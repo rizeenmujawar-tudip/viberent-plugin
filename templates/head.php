@@ -192,37 +192,5 @@ if ($mypagetitle) {
             }
 
         });
-
-
-        // The function below will start the confirmation dialog
-        function confirmAction(itemcode) {
-            var confirmAction = confirm("Are you sure to delete the item?");
-            if (confirmAction) {
-                var url = window.location.pathname + "/?action=remove&sessionID=" + itemcode;
-                window.location = url;
-                confirmReload();
-            } else {
-                alert("Action canceled");
-            }
-        }
-
-        function confirmAll() {
-            var confirmAction = confirm("Are you sure to delete all the items?");
-            if (confirmAction) {
-                var url = window.location.pathname + "/?action=empty";
-                window.location = url;
-                confirmReload();
-            } else {
-                alert("Action canceled");
-            }
-        }
-
-        window.setTimeout(function confirmReload() {
-            var field = 'action';
-            var url = window.location.href;
-            if (url.indexOf('?' + field + '=') != -1)
-                window.location = window.location.pathname;
-            return true;
-        }, 3000);
     </script>
 </head>
