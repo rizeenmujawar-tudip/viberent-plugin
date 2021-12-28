@@ -1,0 +1,23 @@
+body {
+    text-align: center;
+    background-color: bisque;
+    padding: 3rem 7rem;
+}
+
+#thanku {
+    background-color: white;
+    padding: 1rem 1rem 3rem 1rem;
+}
+
+#btn_shop_now {
+   background-color: #4d96d5;
+   color: white;
+   border: none;
+   text-decoration: none;
+   padding: 10px;
+   border-radius: 5px;
+}
+
+#continue_btn {
+    margin-top: 40px;
+}
