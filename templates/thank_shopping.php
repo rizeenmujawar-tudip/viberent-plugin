@@ -101,13 +101,9 @@ if(!empty($resulty)){
 
             echo "<h3><b>Your Quote Number </b></h3><h3 style=font-weight:normal;>";
             echo $result[0]->QuoteNumber. "</h3";
-            $delete = $wpdb->query("TRUNCATE TABLE `wp_quote_number`");
-            $query = $_GET;
-            $query_result = http_build_query($query);
-
+            $wpdb->query("TRUNCATE TABLE `wp_quote_number`");
             unset($_SESSION["cart_item"]);
             $wpdb->query("TRUNCATE TABLE `wp_tbl_product`");
-
             $wpdb->query("TRUNCATE TABLE `wp_viberent_post_array`");
 
             }
