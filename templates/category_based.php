@@ -30,7 +30,6 @@ require_once('head.php');
                             <?php
 
                             foreach ($respperiod as $retrieved_period) {
-                                echo $retrieved_period["value"];
                             ?>
                                 <option value="<?php echo esc_attr($retrieved_period["name"]); ?>"><?php echo esc_html($retrieved_period["name"]); ?></option>
 
