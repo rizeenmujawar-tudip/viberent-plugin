@@ -1,10 +1,10 @@
 <?php
-function get_page_id_by_title($title)
+function viberent_get_page_id_by_title($title)
 {
     $page = get_page_by_title($title);
     return $page->ID;
 }
-function create_page($title_of_the_page, $parent_id = NULL)
+function viberent_create_page($title_of_the_page, $parent_id = NULL)
 {
     $objPage = get_page_by_title($title_of_the_page, 'OBJECT', 'page');
     if (!empty($objPage)) {
@@ -118,8 +118,6 @@ function viberent_init()
     PRIMARY KEY (id)
   ) $charset_collate;";
     dbDelta($sql);
-
-
 ?>
     <div id="full_page_viberent_plugin">
         <div>
@@ -225,7 +223,7 @@ function viberent_init()
                 </button>
             </form>
 
-        <?php
+            <?php
 
             $resulu = $wpdb->get_results("SELECT * from wp_viberent_layout");
             $resuli = $wpdb->get_results("SELECT * from wp_viberent_pagename");
@@ -234,61 +232,60 @@ function viberent_init()
                 if (!empty($resuli)) {
 
                     if ($resulu[0]->selected_layout == "item-based") {
-                        $page_id = create_page($resuli[0]->pagename);
+                        $page_id = viberent_create_page($resuli[0]->pagename);
                         update_post_meta($page_id, '_wp_page_template', 'templates/item_based.php');
-
-                        $page_id_one = create_page('My cart');
+                        
+                        $page_id_one = viberent_create_page('My cart');
                         update_post_meta($page_id_one, '_wp_page_template', 'templates/my_cart.php');
 
-                        $page_id_two = create_page('Place my order');
+                        $page_id_two = viberent_create_page('Place my order');
                         update_post_meta($page_id_two, '_wp_page_template', 'templates/place_my_order.php');
 
-                        $page_id_three = create_page('Thank shopping');
+                        $page_id_three = viberent_create_page('Thank shopping');
                         update_post_meta($page_id_three, '_wp_page_template', 'templates/thank_shopping.php');
                     }
 
                     if ($resulu[0]->selected_layout == "category-based") {
-                        $page_id = create_page($resuli[0]->pagename);
+                        $page_id = viberent_create_page($resuli[0]->pagename);
                         update_post_meta($page_id, '_wp_page_template', 'templates/category_based.php');
 
-                        $page_id_one = create_page('My cart');
+                        $page_id_one = viberent_create_page('My cart');
                         update_post_meta($page_id_one, '_wp_page_template', 'templates/my_cart.php');
 
-                        $page_id_two = create_page('Place my order');
+                        $page_id_two = viberent_create_page('Place my order');
                         update_post_meta($page_id_two, '_wp_page_template', 'templates/place_my_order.php');
 
-                        $page_id_three = create_page('Thank shopping');
+                        $page_id_three = viberent_create_page('Thank shopping');
                         update_post_meta($page_id_three, '_wp_page_template', 'templates/thank_shopping.php');
                     }
                 }
             }
-
         }
 
 
 
         if (isset($_POST["logout"])) {
             $resuli = $wpdb->get_results("SELECT * from wp_viberent_pagename");
-            $page_id = get_page_id_by_title($resuli[0]->pagename, $post_type = 'page');
-            $page_id_one = get_page_id_by_title('My cart', $post_type = 'page');
-            $page_id_two = get_page_id_by_title('Place my order', $post_type = 'page');
-            $page_id_three = get_page_id_by_title('Thank shopping', $post_type = 'page');
+            $page_id = viberent_get_page_id_by_title($resuli[0]->pagename, $post_type = 'page');
+            $page_id_one = viberent_get_page_id_by_title('My cart', $post_type = 'page');
+            $page_id_two = viberent_get_page_id_by_title('Place my order', $post_type = 'page');
+            $page_id_three = viberent_get_page_id_by_title('Thank shopping', $post_type = 'page');
 
             $wpdb->delete('wp_posts', array('ID' => $page_id));
             $wpdb->delete('wp_posts', array('ID' => $page_id_one));
             $wpdb->delete('wp_posts', array('ID' => $page_id_two));
             $wpdb->delete('wp_posts', array('ID' => $page_id_three));
             $delete = $wpdb->query("TRUNCATE TABLE `wp_viberent_clients_company_info`");
-        ?>
+            ?>
             <script>
-              window.location.reload();
+                window.location.reload();
             </script>
             <?php
         }
 
 
         if (isset($_POST["submit"])) {
-            $password = $_POST["password"];
+            $password = sanitize_text_field($_POST["password"]);
             $response = wp_remote_get('https://viberent-api.azurewebsites.net/api/Customer/login-details?ApiSecretKey=' . $password);
             $body     = wp_remote_retrieve_body($response);
             $resp = json_decode($body, 1);
@@ -314,7 +311,7 @@ function viberent_init()
                         $chooseLayout = $chooseLayout[0]->selected_layout;
                     }
 
-                    $chooseLayout = isset($_POST['chosen_layout']) ? ($_POST['chosen_layout']) : $chooseLayout;
+                    $chooseLayout = isset($_POST['chosen_layout']) ? sanitize_text_field($_POST['chosen_layout']) : sanitize_text_field($chooseLayout);
 
                     echo "</br><b>Company Name:</b> ";
                     echo sanitize_text_field($result[0]->companyName);
@@ -365,30 +362,30 @@ function viberent_init()
                     if (!empty($resuli)) {
 
                         if ($resulu[0]->selected_layout == "item-based") {
-                            $page_id = create_page($resuli[0]->pagename);
+                            $page_id = viberent_create_page($resuli[0]->pagename);
                             update_post_meta($page_id, '_wp_page_template', 'templates/item_based.php');
 
-                            $page_id_one = create_page('My cart');
+                            $page_id_one = viberent_create_page('My cart');
                             update_post_meta($page_id_one, '_wp_page_template', 'templates/my_cart.php');
 
-                            $page_id_two = create_page('Place my order');
+                            $page_id_two = viberent_create_page('Place my order');
                             update_post_meta($page_id_two, '_wp_page_template', 'templates/place_my_order.php');
 
-                            $page_id_three = create_page('Thank shopping');
+                            $page_id_three = viberent_create_page('Thank shopping');
                             update_post_meta($page_id_three, '_wp_page_template', 'templates/thank_shopping.php');
                         }
 
                         if ($resulu[0]->selected_layout == "category-based") {
-                            $page_id = create_page($resuli[0]->pagename);
+                            $page_id = viberent_create_page($resuli[0]->pagename);
                             update_post_meta($page_id, '_wp_page_template', 'templates/category_based.php');
 
-                            $page_id_one = create_page('My cart');
+                            $page_id_one = viberent_create_page('My cart');
                             update_post_meta($page_id_one, '_wp_page_template', 'templates/my_cart.php');
 
-                            $page_id_two = create_page('Place my order');
+                            $page_id_two = viberent_create_page('Place my order');
                             update_post_meta($page_id_two, '_wp_page_template', 'templates/place_my_order.php');
 
-                            $page_id_three = create_page('Thank shopping');
+                            $page_id_three = viberent_create_page('Thank shopping');
                             update_post_meta($page_id_three, '_wp_page_template', 'templates/thank_shopping.php');
                         }
                     }
@@ -399,18 +396,18 @@ function viberent_init()
         }
 
 
-      
+
 
 
         if (isset($_POST["radio_layout_submit"])) {
 
             $resul = $wpdb->get_results("SELECT * from $table_name");
             $resulu = $wpdb->get_results("SELECT * from wp_viberent_layout");
-            
+
             $item_layout = array(
                 "companyID" => $resul[0]->companyID,
                 "useName" => $resul[0]->useName,
-                "selected_layout" => $_POST["chosen_layout"]
+                "selected_layout" => sanitize_text_field($_POST["chosen_layout"])
             );
 
             if (empty($resulu)) {
@@ -425,7 +422,7 @@ function viberent_init()
                 $mypagearr = array(
                     "companyID" => $resul[0]->companyID,
                     "useName" => $resul[0]->useName,
-                    "pagename" => $_POST["pagename"]
+                    "pagename" => sanitize_text_field($_POST["pagename"])
                 );
                 $wpdb->insert('wp_viberent_pagename', $mypagearr);
             }
