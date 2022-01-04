@@ -21,7 +21,7 @@ function vibrentLogin_load_template($template)
 
     global $post;
     global $wpdb;
-    $postId = isset($post->ID) ? $post->ID : "";
+    $postId = isset($post->ID) ? sanitize_text_field($post->ID) : "";
     $custom_template_slug = "";
     $cart_template_slug = "";
     $myorder_template_slug = "";
