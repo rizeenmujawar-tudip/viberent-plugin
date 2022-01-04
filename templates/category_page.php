@@ -167,7 +167,7 @@ if (!empty($_GET["action"])) {
                                 if (empty($_SESSION["cart_item"][$k]["quantity"])) {
                                     $_SESSION["cart_item"][$k]["quantity"] = 0;
                                 }
-                                $_SESSION["cart_item"][$k]["quantity"] += $_POST["quantity"];
+                                $_SESSION["cart_item"][$k]["quantity"] += sanitize_text_field($_POST["quantity"]);
                             }
                         }
                     } else {
