@@ -1,5 +1,4 @@
 <?php
-
 global $wpdb;
 $query = $_GET;
 $full_path = explode('templates', plugin_dir_url(__FILE__));
@@ -91,7 +90,7 @@ if($countresp==0){
 if (isset($_POST["rentalratesName"])) {
 	$rental_period = sanitize_text_field($_POST["rentalratesName"]);
 } else {
-	$rental_period = $firstRental_period;
+	$rental_period = sanitize_text_field($firstRental_period);
 }
 
 $resuli = $wpdb->get_results("SELECT * from wp_viberent_pagename");
@@ -145,7 +144,7 @@ if (!empty($_GET["action"])) {
 					'product_image' => $productByCode[0]->product_image,
 					'rental_period' => $productByCode[0]->rental_period,
 					'startDate' => $productByCode[0]->startDate,
-					'productAvailble' => $_POST["productAvailable"],
+					'productAvailble' => sanitize_text_field($_POST["productAvailable"]),
 					'endDate' => $productByCode[0]->endDate,
 					'sessionID'=> $productByCode[0]->sessionID
 				));
@@ -157,7 +156,7 @@ if (!empty($_GET["action"])) {
 								if (empty($_SESSION["cart_item"][$k]["quantity"])) {
 									$_SESSION["cart_item"][$k]["quantity"] = 0;
 								}
-								$_SESSION["cart_item"][$k]["quantity"] += $_POST["quantity"];
+								$_SESSION["cart_item"][$k]["quantity"] += sanitize_text_field($_POST["quantity"]);
 							}
 						}
 					} else {
