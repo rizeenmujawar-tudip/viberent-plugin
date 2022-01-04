@@ -119,8 +119,8 @@ if (isset($_GET['pageno'])) {
 }
 global $wpdb;
 
-$pID = isset($_POST['pID']) ? $_POST['pID'] : "";
-$quan = isset($_POST['quan']) ? $_POST['quan'] : "";
+$pID = isset($_POST['pID']) ? sanitize_text_field($_POST['pID']) : "";
+$quan = isset($_POST['quan']) ? sanitize_text_field($_POST['quan']) : "";
 $rental_period = isset($_POST['rental_period']) ? sanitize_text_field($_POST['rental_period']) : "";
 $session_ID = isset($_POST['sessionID']) ? sanitize_text_field($_POST['sessionID']) : "";
 
@@ -166,7 +166,7 @@ $logo = isset($logo_result) ?  $logo_result : "Logo";
 <body <?php body_class(); ?> itemscope itemtype="http://schema.org/WebPage">
     <link rel="stylesheet" href="<?php echo plugins_url(); ?>/viberent/assets/css/my_cart.css" type="text/css" media="screen" />
     <nav class="navbar navbar-light bg-light sticky-top justify-content-between px-5 py-0">
-        <a class="navbar-brand p-0" href="#"><?php echo "<img class='logo-image' src='data:image/jpeg;base64, $logo' />"; ?></a>
+        <a class="navbar-brand p-0" href="#"><img class='logo-image' src='data:image/jpeg;base64, <?php echo esc_attr($logo); ?>' /></a>
         <div id="empty_cart">
             <a id="btnEmpty" href="#" onclick="confirmAll()">Empty Cart</a>
         </div>
@@ -255,8 +255,8 @@ $logo = isset($logo_result) ?  $logo_result : "Logo";
                                 $productAvailable = $item["productAvailble"];
                             }
 
-                            $pID = isset($_POST['pID']) ? $_POST['pID'] : $getcode;
-                            $quan = isset($_POST['quan']) ? $_POST['quan'] : $productAvailable;
+                            $pID = isset($_POST['pID']) ? sanitize_text_field($_POST['pID']) : sanitize_text_field($getcode);
+                            $quan = isset($_POST['quan']) ? sanitize_text_field($_POST['quan']) : sanitize_text_field($productAvailable);
 
                             $wpdb->query($wpdb->prepare("UPDATE wp_tbl_product
                                      SET quantity= " . $quan . "
@@ -268,9 +268,9 @@ $logo = isset($logo_result) ?  $logo_result : "Logo";
                         ?>
                             <tr style="text-align:left;">
                                 <td style="text-align:left;"><img src="<?php echo esc_url($item["product_image"]); ?>" class="cart-item-image" />
-                                    <p class="my-auto"><?php echo $item["product_name"]; ?></p>
+                                    <p class="my-auto"><?php echo esc_html($item["product_name"]); ?></p>
                                 </td>
-                                <td><?php echo $item["rental_period"]; ?></td>
+                                <td><?php echo esc_html($item["rental_period"]); ?></td>
                                 <td><?php echo date($dateFormat, strtotime($item["startDate"])); ?></td>
                                 <td><?php echo date($dateFormat, strtotime($item["endDate"])); ?></td>
                                 <td style="text-align:right;" class="item-row">
@@ -330,7 +330,7 @@ $logo = isset($logo_result) ?  $logo_result : "Logo";
                 if ($total_quantity != 0) {
             ?>
                     <a href="<?php echo site_url() . "/place-my-order/" ?>">
-                        <button type="submit" name="my-place-order" id="btn_place_order">
+                        <button type="submit" name="my-place-order" id="btn_place_order" class="mb-5">
                             <h5 class="m-0 p-2">Place Order</h5>
                         </button>
                     </a>
