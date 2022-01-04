@@ -8,7 +8,7 @@ require_once('head.php');
 <body <?php body_class(); ?> itemscope itemtype="http://schema.org/WebPage">
 	<link rel="stylesheet" href="<?php echo plugins_url(); ?>/viberent/assets/css/item.css" type="text/css" media="screen" />
 	<nav id="my_main_nav" class="navbar navbar-light bg-light sticky-top justify-content-between py-0 px-2 px-sm-5">
-		<a class="navbar-brand p-0" href="#"><?php echo "<img class='logo-image' src='data:image/jpeg;base64, $logo' />"; ?></a>
+		<a class="navbar-brand p-0" href="#"><img class='logo-image' src='data:image/jpeg;base64, <?php echo esc_attr($logo); ?>' /></a>
 		<a id="btn_mycart" class="btn_mycart pt-1" href="<?php echo site_url() . "/my-cart/" ?>">
 			<span class="fa-stack fa-2x has-badge cart" data-count="0">
 				<i class="fa fa-shopping-cart fa-stack-1x"></i>
@@ -311,7 +311,7 @@ require_once('head.php');
 				</div>
 			</div>
 			<script>
-				$("input[type='date']").on("change", function() {
+				jQuery("input[type='date']").on("change", function() {
 					this.setAttribute(
 						"data-date",
 						moment(this.value, "YYYY-MM-DD")
@@ -362,9 +362,9 @@ require_once('head.php');
 					foreach ($resp2 as $retrieved_data) {
 						$curlavail = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-availability?itemGUID=' . $retrieved_data["itemGUID"] . '&companyid=' . $companyID . '&fromDate=' . $my_from_date . '&todate=' . $my_to_date . '&PeriodTypeId=27&locationID=0');
 
-						    if (is_wp_error($curlavail) || wp_remote_retrieve_response_code($curlavail) != 200) {
-						      return false;
-						    }
+						if (is_wp_error($curlavail) || wp_remote_retrieve_response_code($curlavail) != 200) {
+							return false;
+						}
 
 						$responseavail = wp_remote_retrieve_body($curlavail);
 						$respavail = json_decode($responseavail, 1);
@@ -372,13 +372,13 @@ require_once('head.php');
 						<div class="item-category-box ng-star-inserted px-3 px-xl-5">
 							<form method="post" action="<?php echo site_url();
 														if (isset($query['pageno'])) { ?>/<?php echo $mypagename; ?>?pageno=<?php echo $query['pageno'];
-														} else { ?>/<?php echo $mypagename; ?>?pageno=1<?php } ?>&action=add&GUID=<?php echo trim($retrieved_data['itemGUID']); ?>&rental_period=<?php echo $rentalPeriod; ?>">
+																														} else { ?>/<?php echo $mypagename; ?>?pageno=1<?php } ?>&action=add&GUID=<?php echo trim($retrieved_data['itemGUID']); ?>&rental_period=<?php echo $rentalPeriod; ?>">
 								<div class="item-info">
 
 									<div class="item-details">
 
 										<div class="product-title">
-											<h5 class="product-name"><?php echo $retrieved_data["itemName"]; ?></h5>
+											<h5 class="product-name"><?php echo esc_html($retrieved_data["itemName"]); ?></h5>
 											<h5 class="product-pricing m-0">
 												<?php
 												if (isset($_POST["period"])) {
@@ -391,9 +391,9 @@ require_once('head.php');
 													$i = 1;
 													foreach ($retrieved_data["rentalRates"] as $rentalRate) {
 														if ($rentalRate['rentalratesName'] == $my_rental_period) {
-															echo $currencysymbol;
-															echo $rentalRate['rentalratesvalue'];
-															echo " : " . $my_rental_period;
+															echo esc_html($currencysymbol);
+															echo esc_html($rentalRate['rentalratesvalue']);
+															echo " : " . esc_html($my_rental_period);
 															$is_present = 1;
 															if ($i == 1) {
 												?>
@@ -416,9 +416,9 @@ require_once('head.php');
 													$i = 1;
 													foreach ($retrieved_data["rentalRates"] as $rentalRate) {
 														if ($rentalRate['rentalratesName'] == $firstRental_period) {
-															echo $currencysymbol;
-															echo $rentalRate['rentalratesvalue'];
-															echo " : " . $firstRental_period;
+															echo esc_html($currencysymbol);
+															echo esc_html($rentalRate['rentalratesvalue']);
+															echo " : " . esc_html($firstRental_period);
 															$is_daily = 1;
 															if ($i == 1) {
 														?>
@@ -596,5 +596,4 @@ require_once('head.php');
 		</div>
 	</div>
 </body>
-
 </html>
