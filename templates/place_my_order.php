@@ -24,7 +24,7 @@ $logo = isset($logo_result) ?  $logo_result : "Logo";
   <link rel="stylesheet" href="<?php echo plugins_url(); ?>/viberent/assets/css/all.css" type="text/css" media="screen" />
   <link rel="stylesheet" href="<?php echo plugins_url(); ?>/viberent/assets/css/custom.css">
   <link rel="stylesheet" href="<?php echo plugins_url(); ?>/viberent/assets/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-  <script src="<?php echo plugins_url(); ?>/viberent/assets/js/jquery.js"></script>
+    <script src="<?php echo plugins_url(); ?>/viberent/assets/js/jquery.js"></script>
   <script>
     jQuery(document).ready(function() {
       /*spinner code start here*/
@@ -79,136 +79,136 @@ $logo = isset($logo_result) ?  $logo_result : "Logo";
 
 </head>
 
-  <body>
-    <link rel="stylesheet" href="<?php echo plugins_url(); ?>/viberent/assets/css/place_order.css" type="text/css" media="screen" />
-    <nav class="navbar navbar-light bg-light sticky-top justify-content-between px-5 py-0">
-      <a class="navbar-brand p-0" href="#"><?php echo "<img class='logo-image' src='data:image/jpeg;base64, $logo' />"; ?></a>
-      <a id="btn_mycart" class="btn_mycart pt-1" href="<?php echo site_url() . "/my-cart/" ?>">
-        <span class="fa-stack fa-2x has-badge cart" data-count="0">
-          <i class="fa fa-shopping-cart fa-stack-1x"></i>
-        </span>
-      </a>
-    </nav>
-
-<?php
-$query = $_GET;
-$query_result = http_build_query($query);
-if (isset($_GET['pageno'])) {
-  $page_no_cat = sanitize_text_field($_GET['pageno']);
-} else {
-  $page_no_cat = 1;
-}
-global $wpdb;
-if (isset($_SESSION["cart_item"])) {
-  $total_quantity = 0;
-  $total_price = 0;
-  $result = $wpdb->get_results("SELECT * from wp_viberent_clients_company_info");
-  $currencysymbol = sanitize_text_field($result[0]->currencysymbol);
-  $dateFormatfromAPi = sanitize_text_field($result[0]->dateFormat);
-  if ($dateFormatfromAPi == "dd/MM/yyyy") {
-    $dateFormat = "j/m/Y";
-  } else if ($dateFormatfromAPi == "MM/dd/yyyy") {
-    $dateFormat = "m/j/Y";
-  } else if ($dateFormatfromAPi == "MM-dd-yyyy") {
-    $dateFormat = "m-j-Y";
-  }
-  $all_items = array();
-
-  $result = $wpdb->get_results("SELECT * from wp_viberent_clients_company_info");
-  $companyID = sanitize_text_field($result[0]->companyID);
-
-  foreach ($_SESSION["cart_item"] as $item) {
-    //print_r($item);
-    $getcode = $item["code"];
-    $mystartDate = date($dateFormat, strtotime($item["startDate"]));
-    $myendDate = date($dateFormat, strtotime($item["endDate"]));
-    $rentalp = sanitize_text_field($item["rental_period"]);
-
-    if ($item["productAvailble"] >= $item["quantity"]) {
-      $myquanti = $item["quantity"];
-    } else {
-      $myquanti = $item["productAvailble"];
-    }
-
-
-    $responseperiod = wp_remote_get('https://viberent-api.azurewebsites.net/api/item/rental-periodtype?companyid=' . $companyID);
-
-    if (is_wp_error($responseperiod) || wp_remote_retrieve_response_code($responseperiod) != 200) {
-      return false;
-    }
-
-    $responsbody = wp_remote_retrieve_body($responseperiod);
-    $respperiod = json_decode($responsbody, 1);
-
-    foreach ($respperiod as $myresp) {
-      if ($myresp["name"] == $item["rental_period"]) {
-        $myHireID = $myresp["periodTypeId"];
-      }
-    }
-
-    $each_item = array("from" => $item["startDate"], "to" => $item["endDate"], "itemGUID" => $item["GUID"], "itemCode" => $item["code"], "price" => $item["price"], "itemHireTypeID" => $myHireID, "quantity" => $myquanti, "location" => $item["locationID"]);
-    array_push($all_items, $each_item);
-  }
-?>
+<body>
+  <link rel="stylesheet" href="<?php echo plugins_url(); ?>/viberent/assets/css/place_order.css" type="text/css" media="screen" />
+  <nav class="navbar navbar-light bg-light sticky-top justify-content-between px-5 py-0">
+    <a class="navbar-brand p-0" href="#"><?php echo "<img class='logo-image' src='data:image/jpeg;base64, $logo' />"; ?></a>
+    <a id="btn_mycart" class="btn_mycart pt-1" href="<?php echo site_url() . "/my-cart/" ?>">
+      <span class="fa-stack fa-2x has-badge cart" data-count="0">
+        <i class="fa fa-shopping-cart fa-stack-1x"></i>
+      </span>
+    </a>
+  </nav>
 
   <?php
-  if (isset($_POST['confirm_order'])) {
-    $companyID = $result[0]->companyID;
-    $custoname = sanitize_text_field($_POST["customer_name"]);
-    $custoCompany = sanitize_text_field($_POST["customer_company"]);
-    $billing_address = sanitize_text_field($_POST["billing_address"]);
-    $city_bill = sanitize_text_field($_POST["city_bill"]);
-    $state_bill = sanitize_text_field($_POST["state_bill"]);
-    $postalCode_bill = sanitize_text_field($_POST["postalCode_bill"]);
-    $country_bill = sanitize_text_field($_POST["country_bill"]);
-    $email_bill = sanitize_text_field($_POST["email_bill"]);
-    $phone_bill = sanitize_text_field($_POST["phone_bill"]);
-
-    if (isset($_POST['diff_shippin'])) {
-      $shipping_address = sanitize_text_field($_POST["shipping_address"]);
-      $city_ship = sanitize_text_field($_POST["city_ship"]);
-      $state_ship = sanitize_text_field($_POST["state_ship"]);
-      $postalCode_ship = sanitize_text_field($_POST["postalCode_ship"]);
-      $country_ship = sanitize_text_field($_POST["country_ship"]);
-      $email_ship = sanitize_text_field($_POST["email_ship"]);
-      $phone_ship = sanitize_text_field($_POST["phone_ship"]);
-    } else {
-      $shipping_address = sanitize_text_field($_POST["billing_address"]);
-      $city_ship = sanitize_text_field($_POST["city_bill"]);
-      $state_ship = sanitize_text_field($_POST["state_bill"]);
-      $postalCode_ship = sanitize_text_field($_POST["postalCode_bill"]);
-      $country_ship = sanitize_text_field($_POST["country_bill"]);
-      $email_ship = sanitize_text_field($_POST["email_bill"]);
-      $phone_ship = sanitize_text_field($_POST["phone_bill"]);
+  $query = $_GET;
+  $query_result = http_build_query($query);
+  if (isset($_GET['pageno'])) {
+    $page_no_cat = sanitize_text_field($_GET['pageno']);
+  } else {
+    $page_no_cat = 1;
+  }
+  global $wpdb;
+  if (isset($_SESSION["cart_item"])) {
+    $total_quantity = 0;
+    $total_price = 0;
+    $result = $wpdb->get_results("SELECT * from wp_viberent_clients_company_info");
+    $currencysymbol = sanitize_text_field($result[0]->currencysymbol);
+    $dateFormatfromAPi = sanitize_text_field($result[0]->dateFormat);
+    if ($dateFormatfromAPi == "dd/MM/yyyy") {
+      $dateFormat = "j/m/Y";
+    } else if ($dateFormatfromAPi == "MM/dd/yyyy") {
+      $dateFormat = "m/j/Y";
+    } else if ($dateFormatfromAPi == "MM-dd-yyyy") {
+      $dateFormat = "m-j-Y";
     }
+    $all_items = array();
 
-    $datatest = array('custoname' => $custoname, 'companyid' => $companyID, "billing_address" => $billing_address, "city_bill" => $city_bill, "state_bill" => $state_bill, "postalCode_bill" => $postalCode_bill, "country_bill" => $country_bill, "email_bill" => $email_bill, "phone_bill" => $phone_bill, "shipping_address" => $shipping_address, "city_ship" => $city_ship, "state_ship" => $state_ship, "postalCode_ship" => $postalCode_ship, "country_ship" => $country_ship, "email_ship" => $email_ship, "phone_ship" => $phone_ship);
+    $result = $wpdb->get_results("SELECT * from wp_viberent_clients_company_info");
+    $companyID = sanitize_text_field($result[0]->companyID);
+
+    foreach ($_SESSION["cart_item"] as $item) {
+      //print_r($item);
+      $getcode = $item["code"];
+      $mystartDate = date($dateFormat, strtotime($item["startDate"]));
+      $myendDate = date($dateFormat, strtotime($item["endDate"]));
+      $rentalp = sanitize_text_field($item["rental_period"]);
+
+      if ($item["productAvailble"] >= $item["quantity"]) {
+        $myquanti = $item["quantity"];
+      } else {
+        $myquanti = $item["productAvailble"];
+      }
 
 
-    $resulty = $wpdb->get_results("SELECT custoname from wp_viberent_post_array WHERE `custoname` IS NOT NULL");
+      $responseperiod = wp_remote_get('https://viberent-api.azurewebsites.net/api/item/rental-periodtype?companyid=' . $companyID);
 
-    if(count($resulty) == 0){
+      if (is_wp_error($responseperiod) || wp_remote_retrieve_response_code($responseperiod) != 200) {
+        return false;
+      }
 
-      $wpdb->insert('wp_viberent_post_array', $datatest);
+      $responsbody = wp_remote_retrieve_body($responseperiod);
+      $respperiod = json_decode($responsbody, 1);
+
+      foreach ($respperiod as $myresp) {
+        if ($myresp["name"] == $item["rental_period"]) {
+          $myHireID = $myresp["periodTypeId"];
+        }
+      }
+
+      $each_item = array("from" => $item["startDate"], "to" => $item["endDate"], "itemGUID" => $item["GUID"], "itemCode" => $item["code"], "price" => $item["price"], "itemHireTypeID" => $myHireID, "quantity" => $myquanti, "location" => $item["locationID"]);
+      array_push($all_items, $each_item);
     }
+  ?>
+
+    <?php
+    if (isset($_POST['confirm_order'])) {
+      $companyID = $result[0]->companyID;
+      $custoname = sanitize_text_field($_POST["customer_name"]);
+      $custoCompany = sanitize_text_field($_POST["customer_company"]);
+      $billing_address = sanitize_text_field($_POST["billing_address"]);
+      $city_bill = sanitize_text_field($_POST["city_bill"]);
+      $state_bill = sanitize_text_field($_POST["state_bill"]);
+      $postalCode_bill = sanitize_text_field($_POST["postalCode_bill"]);
+      $country_bill = sanitize_text_field($_POST["country_bill"]);
+      $email_bill = sanitize_text_field($_POST["email_bill"]);
+      $phone_bill = sanitize_text_field($_POST["phone_bill"]);
+
+      if (isset($_POST['diff_shippin'])) {
+        $shipping_address = sanitize_text_field($_POST["shipping_address"]);
+        $city_ship = sanitize_text_field($_POST["city_ship"]);
+        $state_ship = sanitize_text_field($_POST["state_ship"]);
+        $postalCode_ship = sanitize_text_field($_POST["postalCode_ship"]);
+        $country_ship = sanitize_text_field($_POST["country_ship"]);
+        $email_ship = sanitize_text_field($_POST["email_ship"]);
+        $phone_ship = sanitize_text_field($_POST["phone_ship"]);
+      } else {
+        $shipping_address = sanitize_text_field($_POST["billing_address"]);
+        $city_ship = sanitize_text_field($_POST["city_bill"]);
+        $state_ship = sanitize_text_field($_POST["state_bill"]);
+        $postalCode_ship = sanitize_text_field($_POST["postalCode_bill"]);
+        $country_ship = sanitize_text_field($_POST["country_bill"]);
+        $email_ship = sanitize_text_field($_POST["email_bill"]);
+        $phone_ship = sanitize_text_field($_POST["phone_bill"]);
+      }
+
+      $datatest = array('custoname' => $custoname, 'companyid' => $companyID, "billing_address" => $billing_address, "city_bill" => $city_bill, "state_bill" => $state_bill, "postalCode_bill" => $postalCode_bill, "country_bill" => $country_bill, "email_bill" => $email_bill, "phone_bill" => $phone_bill, "shipping_address" => $shipping_address, "city_ship" => $city_ship, "state_ship" => $state_ship, "postalCode_ship" => $postalCode_ship, "country_ship" => $country_ship, "email_ship" => $email_ship, "phone_ship" => $phone_ship);
+
+
+      $resulty = $wpdb->get_results("SELECT custoname from wp_viberent_post_array WHERE `custoname` IS NOT NULL");
+
+      if (count($resulty) == 0) {
+
+        $wpdb->insert('wp_viberent_post_array', $datatest);
+      }
 
       $url = site_url() . "/thank-shopping";
-  ?>
+    ?>
       <script>
         window.location = '<?php echo $url; ?>';
       </script>
-  <?php 
+    <?php
 
-    // }
-  }
+      // }
+    }
 
-  $resuli = $wpdb->get_results("SELECT * from wp_viberent_pagename");
-  $slug_name = sanitize_title($resuli[0]->pagename);
+    $resuli = $wpdb->get_results("SELECT * from wp_viberent_pagename");
+    $slug_name = sanitize_title($resuli[0]->pagename);
 
-  if (isset($_SESSION['cart_item'])) {
-    $cart_count = count($_SESSION['cart_item']);
-  }
-  ?>
+    if (isset($_SESSION['cart_item'])) {
+      $cart_count = count($_SESSION['cart_item']);
+    }
+    ?>
 
 
     <input type="hidden" id="totalQuantity" value="<?php echo $cart_count; ?>">
@@ -825,25 +825,25 @@ if (isset($_SESSION["cart_item"])) {
     </div>
 
 
-<?php
+  <?php
 
-} else {
+  } else {
 
-  $resuli = $wpdb->get_results("SELECT * from wp_viberent_pagename");
-  $slug_name = sanitize_title($resuli[0]->pagename);
+    $resuli = $wpdb->get_results("SELECT * from wp_viberent_pagename");
+    $slug_name = sanitize_title($resuli[0]->pagename);
 
-?>
+  ?>
 
     <div class="pt-5 text-center my-3">Your Cart is Empty!<br>Please add items to place an order<br><br>
       <a href="<?php echo site_url() . "/" . $slug_name; ?>" class="text-center text-white m-auto btn btn-primary border-0 h4 p-1 px-3 rounded" style="font-size: 1.5rem;">Shop Now</a>
     </div>
 
 
-<?php
-}
+  <?php
+  }
 
-?>
+  ?>
 
-  </body>
+</body>
 
 </html>
