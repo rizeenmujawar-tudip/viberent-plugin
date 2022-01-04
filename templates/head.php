@@ -1,5 +1,5 @@
 <?php
-$url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"; 
+$url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 $slugName = basename(parse_url($url, PHP_URL_PATH));
 $resuli = $wpdb->get_results("SELECT * from wp_viberent_pagename");
 if (!empty($resuli)) {
@@ -8,7 +8,7 @@ if (!empty($resuli)) {
 }
 if ($mypagetitle) {
     $pageTitle =  $mypagetitle;
-} elseif($slugName == "my-cart"){
+} elseif ($slugName == "my-cart") {
     $pageTitle =  "My cart";
 } elseif ($slugName == "place-my-order") {
     $pageTitle =  "Place my order";
@@ -16,6 +16,7 @@ if ($mypagetitle) {
 ?>
 <!DOCTYPE html>
 <html <?php language_attributes(); ?>>
+
 <head>
     <meta charset="<?php bloginfo('charset'); ?>" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -23,6 +24,7 @@ if ($mypagetitle) {
     <meta name="description" content="">
     <meta name="author" content="">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+    <?php //wp_head(); ?>
     <link rel="profile" href="http://gmpg.org/xfn/11" />
     <link rel="pingback" href="<?php bloginfo('pingback_url'); ?>" />
     <link rel="stylesheet" href="<?php echo plugins_url(); ?>/viberent/assets/css/all.css">
