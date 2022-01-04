@@ -10,7 +10,7 @@ require_once('head.php');
 <body <?php body_class(); ?> itemscope itemtype="http://schema.org/WebPage">
     <link rel="stylesheet" href="<?php echo plugins_url(); ?>/viberent/assets/css/category.css" type="text/css" media="screen" />
     <nav id="my_main_nav" class="navbar navbar-light bg-light sticky-top justify-content-between py-0 px-2 px-sm-5">
-        <a class="navbar-brand p-0" href="#"><?php echo "<img class='logo-image' src='data:image/jpeg;base64, $logo' />"; ?></a>
+        <a class="navbar-brand p-0" href="#"><img class='logo-image' src='data:image/jpeg;base64, <?php echo esc_attr($logo); ?>' /></a>
         <a id="btn_mycart" class="btn_mycart pt-1" href="<?php echo site_url() . "/my-cart/" ?>">
             <span class="fa-stack fa-2x has-badge cart" data-count="0">
                 <i class="fa fa-shopping-cart fa-stack-1x"></i>
@@ -314,7 +314,7 @@ require_once('head.php');
                     </form>
                 </div>
                 <script>
-                    $("input[type='date']").on("change", function() {
+                    jQuery("input[type='date']").on("change", function() {
                         this.setAttribute(
                             "data-date",
                             moment(this.value, "YYYY-MM-DD")
@@ -340,9 +340,9 @@ require_once('head.php');
                 $curlall = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-list?&companyid=' . $companyID . '&pageSize=10&pageNumber=' . $page_nos);
 
                 if (is_wp_error($curlall) || wp_remote_retrieve_response_code($curlall) != 200) {
-                  return false;
+                    return false;
                 }
-    
+
                 $response3 = wp_remote_retrieve_body($curlall);
                 $resp3 = json_decode($response3, 1);
 
@@ -399,9 +399,9 @@ require_once('head.php');
                         $curlcatwise = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-list?&companyid=' . $companyID . '&pageSize=10&pageNumber=' . $page_no_cat . '&subcategory=' . $_GET['category']);
 
                         if (is_wp_error($curlcatwise) || wp_remote_retrieve_response_code($curlcatwise) != 200) {
-                          return false;
+                            return false;
                         }
-    
+
                         $response4 = wp_remote_retrieve_body($curlcatwise);
                         $resp_body = json_decode($response4, 1);
 
@@ -446,9 +446,9 @@ require_once('head.php');
                                 $curlavail = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-availability?itemGUID=' . $retrieved_datas["itemGUID"] . '&companyid=' . $companyID . '&fromDate=' . $my_from_date . '&todate=' . $my_to_date . '&PeriodTypeId=27&locationID=0');
 
                                 if (is_wp_error($curlavail) || wp_remote_retrieve_response_code($curlavail) != 200) {
-                                  return false;
+                                    return false;
                                 }
-        
+
                                 $responseavail = wp_remote_retrieve_body($curlavail);
                                 $respavail = json_decode($responseavail, 1);
                             ?>
@@ -486,10 +486,10 @@ require_once('head.php');
                                                             $i = 1;
                                                             foreach ($retrieved_datas["rentalRates"] as $rentalRate) {
                                                                 if ($rentalRate['rentalratesName'] == $_POST["period"]) {
-                                                                    echo $currencysymbol;
-                                                                    echo $rentalRate['rentalratesvalue'];
+                                                                    echo esc_html($currencysymbol);
+                                                                    echo esc_html($rentalRate['rentalratesvalue']);
                                                                     echo " : ";
-                                                                    echo $_POST["period"];
+                                                                    echo esc_html($_POST["period"]);
                                                                     $is_present = 1;
                                                                     if ($i == 1) {
                                                         ?>
@@ -512,9 +512,9 @@ require_once('head.php');
                                                             $i = 1;
                                                             foreach ($retrieved_datas["rentalRates"] as $rentalRate) {
                                                                 if ($rentalRate['rentalratesName'] == $firstRental_period) {
-                                                                    echo $currencysymbol;
-                                                                    echo $rentalRate['rentalratesvalue'];
-                                                                    echo " : " . $firstRental_period;
+                                                                    echo esc_html($currencysymbol);
+                                                                    echo esc_html($rentalRate['rentalratesvalue']);
+                                                                    echo " : " . esc_html($firstRental_period);
                                                                     $is_daily = 1;
                                                                     if ($i == 1) {
                                                                 ?>
@@ -743,10 +743,10 @@ require_once('head.php');
                                                         $i = 1;
                                                         foreach ($retrieved_data["rentalRates"] as $rentalRate) {
                                                             if ($rentalRate['rentalratesName'] == $rentalPeriod) {
-                                                                echo $currencysymbol;
-                                                                echo $rentalRate['rentalratesvalue'];
+                                                                echo esc_html($currencysymbol);
+                                                                echo esc_html($rentalRate['rentalratesvalue']);
                                                                 echo " : ";
-                                                                echo $rentalPeriod;
+                                                                echo esc_html($rentalPeriod);
                                                                 $is_present = 1;
                                                                 if ($i == 1) {
                                                     ?>
