@@ -336,7 +336,7 @@ require_once('head.php');
                     $page_nos = 1;
                 }
 
-                $curlall = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-list?&companyid=' . $companyID . '&pageSize=10&pageNumber=' . $page_nos);
+                $curlall = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-list?&companyid=' . $companyID . '&pageSize=10&pageNumber=' . $page_nos, $api_args);
 
                 if (is_wp_error($curlall) || wp_remote_retrieve_response_code($curlall) != 200) {
                     return false;
@@ -395,7 +395,7 @@ require_once('head.php');
                         }
 
                         $companyID = sanitize_text_field($result[0]->companyID);
-                        $curlcatwise = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-list?&companyid=' . $companyID . '&pageSize=10&pageNumber=' . $page_no_cat . '&subcategory=' . $_GET['category']);
+                        $curlcatwise = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-list?&companyid=' . $companyID . '&pageSize=10&pageNumber=' . $page_no_cat . '&subcategory=' . $_GET['category'], $api_args);
 
                         if (is_wp_error($curlcatwise) || wp_remote_retrieve_response_code($curlcatwise) != 200) {
                             return false;
@@ -442,7 +442,7 @@ require_once('head.php');
                                 </span> </h5>
                             <?php
                             foreach ($resp_body as $retrieved_datas) {
-                                $curlavail = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-availability?itemGUID=' . $retrieved_datas["itemGUID"] . '&companyid=' . $companyID . '&fromDate=' . $my_from_date . '&todate=' . $my_to_date . '&PeriodTypeId=27&locationID=0');
+                                $curlavail = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-availability?itemGUID=' . $retrieved_datas["itemGUID"] . '&companyid=' . $companyID . '&fromDate=' . $my_from_date . '&todate=' . $my_to_date . '&PeriodTypeId=27&locationID=0', $api_args);
 
                                 if (is_wp_error($curlavail) || wp_remote_retrieve_response_code($curlavail) != 200) {
                                     return false;
@@ -695,7 +695,7 @@ require_once('head.php');
 
                         <?php
                         foreach ($resp3 as $retrieved_data) {
-                            $curlavail = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-availability?itemGUID=' . $retrieved_data["itemGUID"] . '&companyid=' . $companyID . '&fromDate=' . $my_from_date . '&todate=' . $my_to_date . '&PeriodTypeId=27&locationID=0');
+                            $curlavail = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-availability?itemGUID=' . $retrieved_data["itemGUID"] . '&companyid=' . $companyID . '&fromDate=' . $my_from_date . '&todate=' . $my_to_date . '&PeriodTypeId=27&locationID=0', $api_args);
 
                             if (is_wp_error($curlavail) || wp_remote_retrieve_response_code($curlavail) != 200) {
                                 return false;
