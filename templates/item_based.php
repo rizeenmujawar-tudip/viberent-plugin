@@ -360,7 +360,7 @@ require_once('head.php');
 
 				if (isset($resp2)) {
 					foreach ($resp2 as $retrieved_data) {
-						$curlavail = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-availability?itemGUID=' . $retrieved_data["itemGUID"] . '&companyid=' . $companyID . '&fromDate=' . $my_from_date . '&todate=' . $my_to_date . '&PeriodTypeId=27&locationID=0');
+						$curlavail = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-availability?itemGUID=' . $retrieved_data["itemGUID"] . '&companyid=' . $companyID . '&fromDate=' . $my_from_date . '&todate=' . $my_to_date . '&PeriodTypeId=27&locationID=0', $api_args);
 
 						if (is_wp_error($curlavail) || wp_remote_retrieve_response_code($curlavail) != 200) {
 							return false;
