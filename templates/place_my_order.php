@@ -117,6 +117,14 @@ $logo = isset($logo_result) ?  $logo_result : "Logo";
     $result = $wpdb->get_results("SELECT * from wp_viberent_clients_company_info");
     $companyID = sanitize_text_field($result[0]->companyID);
 
+    $resapikey = $wpdb->get_results("SELECT * from wp_viberent_apikey");
+    $apikey = $resapikey[0]->apikey;
+    $api_args = array( 'timeout' => 10,
+        'headers'     => array(
+          'ApiKey' => $apikey,
+            'CompanyId' => $companyID
+        )
+    ); 
     foreach ($_SESSION["cart_item"] as $item) {
       //print_r($item);
       $getcode = $item["code"];
@@ -130,8 +138,7 @@ $logo = isset($logo_result) ?  $logo_result : "Logo";
         $myquanti = $item["productAvailble"];
       }
 
-
-      $responseperiod = wp_remote_get('https://viberent-api.azurewebsites.net/api/item/rental-periodtype?companyid=' . $companyID);
+      $responseperiod = wp_remote_get('https://viberent-api.azurewebsites.net/api/item/rental-periodtype?companyid=' . $companyID, $api_args);
 
       if (is_wp_error($responseperiod) || wp_remote_retrieve_response_code($responseperiod) != 200) {
         return false;
