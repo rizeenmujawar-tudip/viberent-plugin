@@ -14,7 +14,16 @@ if (isset($_GET['pageno'])) {
 
 $result = $wpdb->get_results("SELECT * from wp_viberent_clients_company_info");
 $companyID = $result[0]->companyID;
-$responseperiod = wp_remote_get('https://viberent-api.azurewebsites.net/api/item/rental-periodtype?companyid=' . $companyID);
+
+$resapikey = $wpdb->get_results("SELECT * from wp_viberent_apikey");
+$apikey = $resapikey[0]->apikey;
+$api_args = array( 'timeout' => 10,
+    'headers'     => array(
+    	'ApiKey' => $apikey,
+        'CompanyId' => $companyID
+    )
+); 
+$responseperiod = wp_remote_get('https://viberent-api.azurewebsites.net/api/item/rental-periodtype?companyid=' . $companyID, $api_args);
 
     if (is_wp_error($responseperiod) || wp_remote_retrieve_response_code($responseperiod) != 200) {
       return false;
@@ -203,7 +212,8 @@ if ($dateFormatfromAPi == "dd/MM/yyyy") {
 }
 
 $companyID = $result[0]->companyID;
-$response = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-list?&companyid=' . $companyID . '&pageSize=10&pageNumber=' . $page_nos);
+
+$response = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-list?&companyid=' . $companyID . '&pageSize=10&pageNumber=' . $page_nos, $api_args);
 
     if (is_wp_error($response) || wp_remote_retrieve_response_code($response) != 200) {
       return false;
