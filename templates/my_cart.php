@@ -227,8 +227,17 @@ $logo = isset($logo_result) ?  $logo_result : "Logo";
                         }
 
                         $companyID = sanitize_text_field($result[0]->companyID);
+
+                        $resapikey = $wpdb->get_results("SELECT * from wp_viberent_apikey");
+                        $apikey = $resapikey[0]->apikey;
+                        $api_args = array( 'timeout' => 10,
+                            'headers'     => array(
+                                'ApiKey' => $apikey,
+                                'CompanyId' => $companyID
+                            )
+                        ); 
                         foreach ($_SESSION["cart_item"] as $key => $item) {
-                            $responseperiod = wp_remote_get('https://viberent-api.azurewebsites.net/api/item/rental-periodtype?companyid=' . $companyID);
+                            $responseperiod = wp_remote_get('https://viberent-api.azurewebsites.net/api/item/rental-periodtype?companyid=' . $companyID, $api_args);
 
                             if (is_wp_error($responseperiod) || wp_remote_retrieve_response_code($responseperiod) != 200) {
                                 return false;
@@ -239,7 +248,7 @@ $logo = isset($logo_result) ?  $logo_result : "Logo";
 
                             foreach ($respperiod as $retrieved_period) {
                                 if ($item["rental_period"] == $retrieved_period["name"]) {
-                                    $curlavail = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-availability?itemGUID=' . $item["GUID"] . '&companyid=' . $companyID . '&fromDate=' . $item["startDate"] . '&todate=' . $item["endDate"] . '&PeriodTypeId=' . $retrieved_period["periodTypeId"] . '&locationID=' . $item["locationID"]);
+                                    $curlavail = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-availability?itemGUID=' . $item["GUID"] . '&companyid=' . $companyID . '&fromDate=' . $item["startDate"] . '&todate=' . $item["endDate"] . '&PeriodTypeId=' . $retrieved_period["periodTypeId"] . '&locationID=' . $item["locationID"], $api_args);
 
                                     if (is_wp_error($curlavail) || wp_remote_retrieve_response_code($curlavail) != 200) {
                                         return false;
