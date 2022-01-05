@@ -41,6 +41,15 @@ if (isset($_SESSION["cart_item"])) {
   $all_items = array();
   $result = $wpdb->get_results("SELECT * from wp_viberent_clients_company_info");
   $companyID = $result[0]->companyID;
+
+  $resapikey = $wpdb->get_results("SELECT * from wp_viberent_apikey");
+  $apikey = $resapikey[0]->apikey;
+  $api_args = array( 'timeout' => 10,
+      'headers'     => array(
+        'ApiKey' => $apikey,
+          'CompanyId' => $companyID
+      )
+  ); 
   foreach ($_SESSION["cart_item"] as $item) {
     $getcode = $item["code"];
     $mystartDate = date($dateFormat, strtotime($item["startDate"]));
@@ -52,7 +61,7 @@ if (isset($_SESSION["cart_item"])) {
     } else {
       $myquanti = $item["productAvailble"];
     }
-    $responseperiod = wp_remote_get('https://viberent-api.azurewebsites.net/api/item/rental-periodtype?companyid=' . $companyID);
+    $responseperiod = wp_remote_get('https://viberent-api.azurewebsites.net/api/item/rental-periodtype?companyid=' . $companyID, $api_args);
     if (is_wp_error($responseperiod) || wp_remote_retrieve_response_code($responseperiod) != 200) {
       return false;
     }
@@ -71,7 +80,7 @@ if(!empty($resulty)){
     $data = array('customerName' => $resulty[0]->custoname, 'companyid' => $resulty[0]->companyID, "billingAddresses" => array("isBilling" => true, "addressType" => "BillTo", "billAddrDtls" => $resulty[0]->billing_address, "city" => $resulty[0]->city_bill, "state" => $resulty[0]->state_bill, "postalCode" => $resulty[0]->postalCode_bill, "country" => $resulty[0]->country_bill, "email" => $resulty[0]->email_bill, "phone" => $resulty[0]->phone_bill, "contactName" => $resulty[0]->custoname), "shipingAddresses" => array("isBilling" => true, "addressType" => "ShipTo", "billAddrDtls" => $resulty[0]->shipping_address, "city" => $resulty[0]->city_bill, "state" => $resulty[0]->state_ship, "postalCode" => $resulty[0]->postalCode_ship, "country" => $resulty[0]->country_ship, "email" => $resulty[0]->email_ship, "phone" => $resulty[0]->phone_ship, "contactName" => $resulty[0]->custoname), "items" => $all_items);
 
     $curlUrl = wp_remote_post('https://viberent-api.azurewebsites.net/api/Quote/create', array(
-      'headers'     => array('Content-Type' => 'application/json; charset=utf-8'),
+      'headers'     => array('Content-Type' => 'application/json; charset=utf-8', 'ApiKey' => $apikey, 'CompanyId' => $companyID),
       'body'        => json_encode($data),
       'method'      => 'POST',
       'data_format' => 'body',
