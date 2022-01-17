@@ -1,178 +1,158 @@
-  * {
-      box-sizing: border-box;
-      font-family: sans-serif;
-  }
+.viberent_place_order {
+  box-sizing: border-box;
+  background-color: white;
+}
 
-   .a-form-error {
-      border-color: #d00 !important;
-      box-shadow: 0 0 0 3px rgb(221 0 0 / 10%);
-    }
+.viberent_place_order_2 .viberent_shop_now, .viberent_place_order_2 .viberent_shop_now:hover {
+  text-decoration: none !important;
+  text-transform: unset !important;
+}
+
+.viberent_place_order_2 {
+  background-color: white !important;
+}
+
+.viberent_place_order_2 .btn {
+  font-size: 24px !important;
+  text-decoration: unset;
+}
+
+.viberent_place_order hr {
+  margin: 20px 0 !important;
+}
+
+.viberent_place_order .a-form-error {
+  border-color: #d00 !important;
+  box-shadow: 0 0 0 3px rgb(221 0 0 / 10%);
+}
     
-h3 {
+.viberent_place_order h3 {
   font-weight: 600 !important;
-  font-family: sans-serif !important;
 }
 
-form {
-  font-family: sans-serif;
-}
-
-h2.text-center {
-  font-family: sans-serif;
-}
-
-#delivery_heading {
+.viberent_place_order #delivery_heading {
   color: green;
+  font-size: 30px !important;
 }
 
-#btn_confirm_order[disabled] {
-    border-color: #dbdbdb;
-    box-shadow: none;
-    opacity: .5;
+.viberent_place_order #btn_confirm_order[disabled] {
+  border-color: #dbdbdb;
+  box-shadow: none;
+  opacity: .5;
 }
 
-#confirm_btn {
-  font-family: sans-serif;
+.viberent_place_order #confirm_btn {
+  background-color: #4CAF50 !important;
+  color: white !important;
+  padding: 12px 20px !important;
+  border: none !important;
+  border-radius: 4px !important;
+  cursor: pointer !important;
+  font-size: 16px !important;
+  text-decoration: none !important;
+  text-transform: unset !important;
+  width: auto !important;
+}
+
+.viberent_place_order input[type=text], .viberent_place_order input[type=email], .viberent_place_order textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+  background-color: #fff !important;
+}
+
+.viberent_place_order select {
+  width: 100%;
+  padding: 0 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.viberent_place_order label {
+  padding: 12px 12px 12px 0;
+  display: inline-block;
+}
+
+.viberent_place_order input[type=submit]:hover {
+  background-color: #45a049;
+}
+
+.viberent_place_order #orderDet_div {
+  border-radius: 5px;
+  background-color: #f2f2f2;
+  margin: 0;
+}
+
+.viberent_place_order .placeOrderForm {
   font-size: 1rem;
 }
 
-  input[type=text],
-  input[type=email],
-  select,
-  textarea {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      resize: vertical;
-  }
-
-  label {
-      padding: 12px 12px 12px 0;
-      display: inline-block;
-  }
-
-  input[type=submit] {
-      background-color: #4CAF50;
-      color: white;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-  }
-
-  input[type=submit]:hover {
-      background-color: #45a049;
-  }
-
-  .container {
-      border-radius: 5px;
-      background-color: #f2f2f2;
-      margin: 0;
-  }
-
-.placeOrderForm {
-  font-size: 1rem;
+.viberent_place_order #orderDet_div .col-25 {
+  float: left;
+  width: 25% !important;
+  margin-top: 6px !important;
 }
 
-  .col-25 {
-      float: left;
-      width: 25%;
-      margin-top: 6px;
-  }
+.viberent_place_order #orderDet_div .col-75 input[type="text"],
+.viberent_place_order #orderDet_div .col-75 input[type="email"],
+.viberent_place_order #orderDet_div .col-75 select#country_bill,
+.viberent_place_order #orderDet_div .col-75 select#country_ship,
+.viberent_place_order #orderDet_div label,
+.viberent_place_order #orderDet_div .col-25 * {
+  font-size: 16px !important;
+  margin: 0 !important;
+}
 
-  .col-75 {
-      float: left;
-      width: 75%;
-      margin-top: 6px;
-  }
 
-.formAsterisk {
+.viberent_place_order #orderDet_div .col-75 {
+  float: left;
+  width: 75% !important;
+  margin-top: 6px !important;
+}
+
+.viberent_place_order .formAsterisk {
   color: red;
 }
 
   /* Clear floats after the columns */
-  .row:after {
-      content: "";
-      display: table;
-      clear: both;
-  }
-
-  /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
-  @media screen and (max-width: 600px) {
-
-      .col-25,
-      .col-75,
-      input[type=submit] {
-          width: 100%;
-          margin-top: 0;
-      }
-
-      label {
-        margin-bottom: 0 !important;
-      }
-
-  }
-
-  @media screen and (min-width: 992px) {
-      .col-25 {
-          width: 15%;
-      }
-      .col-75 {
-          width: 85%;
-      }
-  }
-
-
-
-  .dis-flex {
-      display: flex;
-      justify-content: space-between;
-      margin: 10px 0;
-  }
-
-  .dis-flex input,
-  .dis-flex select {
-      width: 47%;
-  }
-
-  select {
-      background-color: white;
-  }
-
-
-.has-badge[data-count]:after {
-  position: absolute;
-  right: 0%;
-  top: 0%;
-  content: attr(data-count);
-  font-size: 20px;
-  padding: 0;
-  line-height: .75em;
-  text-align: center;
+.viberent_place_order .row:after {
+  content: "";
+  display: table;
+  clear: both;
 }
 
-.fa-stack[data-count]:after{
-  position:absolute;
-  right:3px;
-  top:0%;
-  content: attr(data-count);
-  font-size:40%;
-  padding: 0.5em 0;
-  border-radius:999px;
-  line-height:.75em;
+.viberent_place_order .dis-flex {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+.viberent_place_order .dis-flex input, .viberent_place_order .dis-flex select {
+  width: 47%;
+}
+
+.viberent_place_order select {
   background-color: white;
-  color: #4d96d5;
-  text-align:center;
-  min-width:2em;
-  font-weight:bold;
-  background: white;
-  border:2px solid;
 }
 
-.logo-image {
-    padding: 5px 0;
-    width: 150px;
-    max-height: 80px;
+@media screen and (max-width: 600px) {
+  .viberent_place_order .col-25, .viberent_place_order .col-75, .viberent_place_order input[type=submit] {
+    width: 100%;
+    margin-top: 0;
+  }
+  .viberent_place_order label {
+    margin-bottom: 0 !important;
+  }
 }
 
+@media screen and (min-width: 992px) {
+  .viberent_place_order .col-25 {
+    width: 15%;
+  }
+  .viberent_place_order .col-75 {
+    width: 85%;
+  }
+}
