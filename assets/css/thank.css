@@ -1,23 +1,35 @@
-body {
-    text-align: center;
-    background-color: bisque;
-    padding: 3rem 7rem;
+.viberent-thanku-section .thanku-section h1{
+    font-size:32px;
+    color:black;
 }
 
-#thanku {
+.viberent-thanku-section .thanku-section h3{
+    font-size: 16px;
+    margin: 18px 0;
+}
+
+.viberent-thanku-section #thanku {
     background-color: white;
-    padding: 1rem 1rem 3rem 1rem;
+    padding: 40px 10px;
+    text-align: center;
 }
 
-#btn_shop_now {
-   background-color: #4d96d5;
-   color: white;
-   border: none;
-   text-decoration: none;
-   padding: 10px;
-   border-radius: 5px;
+.viberent-thanku-section .thanku-section h4{
+    font-size:16px;
+    color: green;
+    padding-top: 10px;
+    margin: 0;
 }
 
-#continue_btn {
+.viberent-thanku-section #btn_shop_now {
+    background-color: #4d96d5;
+    color: white;
+    border: none;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.viberent-thanku-section #continue_btn {
     margin-top: 40px;
 }
