@@ -1,6 +1,6 @@
 === Login To Viberent ===
-Contributors: Rizeen
-Author: Rizeen
+Contributors: Viberent
+Author: Viberent
 Author URI: https://github.com/rizeenmujawar-tudip/viberent-plugin
 Plugin URI: https://wordpress.org/plugins/login-to-viberent
 Tags: viberent, login to viberent, ecommerce, quote, quotation, add to cart, place order, category, available, availability, rental period, dates, from, to, page number, api, booking
