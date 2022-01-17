@@ -165,11 +165,11 @@
 
 .fa-stack {
   display: inline-block;
-  height: 2em;
-  line-height: 2em;
+  height: 50px;
+  line-height: 2;
   position: relative;
   vertical-align: middle;
-  width: 2em; }
+  width: 50px; }
 
 .fa-stack-1x,
 .fa-stack-2x {
