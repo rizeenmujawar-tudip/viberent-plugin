@@ -14,7 +14,6 @@ get_header();
   });
 </script>
 <?php
-$result = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_clients_company_info");
 $query = $_GET;
 $query_result = http_build_query($query);
 if (isset($_GET['pageno'])) {
@@ -23,6 +22,9 @@ if (isset($_GET['pageno'])) {
   $page_no_cat = 1;
 }
 global $wpdb;
+$viberent_mypagename = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
+$slug_name = sanitize_title($viberent_mypagename[0]->pagename);
+
 if (isset($_SESSION["cart_item"])) {
   $total_quantity = 0;
   $total_price = 0;
@@ -57,7 +59,7 @@ if (isset($_SESSION["cart_item"])) {
     } else {
       $myquanti = $item["productAvailble"];
     }
-    $responseperiod = wp_remote_get('https://viberent-api.azurewebsites.net/api/item/rental-periodtype?companyid=' . $companyID, $api_args);
+    $responseperiod = wp_remote_get($viberent_api_url . 'item/rental-periodtype?companyid=' . $companyID, $api_args);
     if (is_wp_error($responseperiod) || wp_remote_retrieve_response_code($responseperiod) != 200) {
       return false;
     }
@@ -114,11 +116,7 @@ if (isset($_SESSION["cart_item"])) {
     </script>
   <?php
   }
-  $resuli = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
-  $slug_name = sanitize_title($resuli[0]->pagename);
-  if (isset($_SESSION['cart_item'])) {
-    $cart_count = count($_SESSION['cart_item']);
-  }
+  $cart_count = count($_SESSION['cart_item']);
   ?>
 <div class="viberent_place_order">
 <div class="container pt-3">
@@ -420,9 +418,9 @@ if (isset($_SESSION["cart_item"])) {
         }
       </script>
       <input type="checkbox" id="diff_shippin" name="diff_shippin" value="different shipping address" onclick="ShowHideDiv(this)" />
-      <label for="diff_shippin"> Use a different shipping address</label><br>
+      <label for="diff_shippin"> Use a different shipping address</label>
       <hr />
-      <div class="row" id="hidden_shippin_addr" style="display: none;">
+      <div class="row" id="hidden_shippin_addr">
         <div class="col-25">
           <label for="shipping">Shipping Address<span class="formAsterisk">*</span></label>
         </div>
@@ -692,34 +690,15 @@ if (isset($_SESSION["cart_item"])) {
   </div>
   <?php
 } else {
-  $resuli = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
-  $slug_name = sanitize_title($resuli[0]->pagename);
   ?>
-    <div class="viberent_place_order_2 no-records py-5 text-center">Your Cart is Empty!<br>Please add items to place an order<br><br>
+    <div class="viberent_place_order_2 no-records py-5 text-center">
+        <p>Your Cart is Empty!</p>
+        <p>Please add items to place an enquiry</p>
       <a href="<?php echo site_url() . "/" . $slug_name; ?>" class="viberent_shop_now text-center text-white m-auto btn btn-primary border-0 h4 p-1 px-3 rounded">Shop Now</a>
     </div>
 </div>
 </div>
 <?php
 }
+get_footer();
 ?>
-<!-- Loading Spinner Wrapper-->
-<div class="loading-spinner">
-    <div class="loader text-center">
-        <div class="loader-inner">
-            <div class="lds-roller mb-3">
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-            </div>
-            <h4 class="text-uppercase font-weight-bold">Loading Data</h4>
-            <p class="font-italic text-muted">This loading window will be removed after <strong class="countdown text-dark font-weight-bold">7 </strong> Seconds</p>
-        </div>
-    </div>
-</div>
-<?php get_footer(); ?>
