@@ -4,7 +4,7 @@ session_start();
 require_once('category_page.php');
 get_header();
 ?>
-<link rel="stylesheet" href="<?php echo plugin_dir_url('category.css', __FILE__ ); ?>viberent/assets/css/category.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="<?php echo plugin_dir_url('category.css', __FILE__); ?>viberent/assets/css/category.css" type="text/css" media="screen" />
 <script>
     jQuery('document').ready(function($) {
         $(".item-category-box").each(function(index, elem) {
@@ -29,7 +29,7 @@ get_header();
 </script>
 <div class="viberent_category_layout">
     <div id="main-container" class="container px-2 px-sm-5 py-5">
-        <div class="d-flex justify-content-end">
+        <div class="d-flex justify-content-end align-items-center viberent_carts mb-3">
             <a class="btn_mycart pt-1" href="<?php echo site_url() . "/my-cart/" ?>">
                 <span class="fa-stack fa-2x has-badge cart" data-count="0">
                     <i class="fa fa-shopping-cart fa-stack-1x"></i>
@@ -83,7 +83,7 @@ get_header();
                                             if (rental_period == period) {
                                                 var start_date = $("#start-date").val();
                                                 var exclude = '<?php echo $retrieved_period["value"] ?>';
-                                                if ((period == "Exclude Sat / Sun")) {
+                                                if (period == "Exclude Sat / Sun") {
                                                     start_date = new Date(start_date);
                                                     var endDate = "",
                                                         noOfDaysToAdd = parseInt(exclude),
@@ -272,16 +272,16 @@ get_header();
                                             var endDate = $("#end-date").val();
                                             localStorage.setItem('endDate', endDate);
                                         });
-                                        if ((localStorage.getItem('startDate'))) {
+                                        if (localStorage.getItem('startDate')) {
                                             var startDate = $("#start-date").val();
-                                            if ((localStorage.getItem('startDate') != startDate)) {
+                                            if (localStorage.getItem('startDate') != startDate) {
                                                 $("#start-date").val(formatDateNew(localStorage.getItem('startDate')));
                                                 $('#my-dates').click();
                                             }
                                         }
-                                        if ((localStorage.getItem('endDate'))) {
+                                        if (localStorage.getItem('endDate')) {
                                             var endDate = $("#end-date").val();
-                                            if ((localStorage.getItem('endDate') != endDate)) {
+                                            if (localStorage.getItem('endDate') != endDate) {
                                                 $("#end-date").val(formatDateNew(localStorage.getItem('endDate')));
                                                 $('#my-dates').click();
                                             }
@@ -293,10 +293,18 @@ get_header();
                             ?>
                         </select>
                         <label for="start-date">Start Date:</label>
-                        <input type="date" data-date="" data-date-format="<?php echo esc_attr($date_Format); ?>" value="<?php if (isset($_POST['start-date'])) { echo esc_attr($_POST['start-date']); } else { echo esc_attr($startFrom_date); } ?>" id="start-date" name="start-date" placeholder="Select Start Date" required>
+                        <input type="date" data-date="" data-date-format="<?php echo esc_attr($date_Format); ?>" value="<?php if (isset($_POST['start-date'])) {
+                                                                                                                            echo esc_attr($_POST['start-date']);
+                                                                                                                        } else {
+                                                                                                                            echo esc_attr($startFrom_date);
+                                                                                                                        } ?>" id="start-date" name="start-date" placeholder="Select Start Date" required>
                         <label for="end-date">End Date:</label>
-                        <input type="date" data-date="" data-date-format="<?php echo esc_attr($date_Format); ?>" value="<?php if (isset($_POST['end-date'])) { echo esc_attr($_POST['end-date']); } else { echo esc_attr($startEnd_date); } ?>" id="end-date" name="end-date" placeholder="Select End Date" required>
-                        <button class="p-0" type="submit" name="my-dates" id="my-dates" style="visibility: hidden;">Check Availability</button>
+                        <input type="date" data-date="" data-date-format="<?php echo esc_attr($date_Format); ?>" value="<?php if (isset($_POST['end-date'])) {
+                                                                                                                            echo esc_attr($_POST['end-date']);
+                                                                                                                        } else {
+                                                                                                                            echo esc_attr($startEnd_date);
+                                                                                                                        } ?>" id="end-date" name="end-date" placeholder="Select End Date" required>
+                        <button class="p-0" type="submit" name="my-dates" id="my-dates">Check Availability</button>
                     </form>
                 </div>
                 <script>
@@ -321,7 +329,7 @@ get_header();
                 } else {
                     $page_nos = 1;
                 }
-                $curlall = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-list?&companyid=' . $companyID . '&pageSize=10&pageNumber=' . $page_nos, $api_args);
+                $curlall = wp_remote_get($viberent_api_url . 'Item/item-list?&companyid=' . $companyID . '&pageSize=10&pageNumber=' . $page_nos, $api_args);
                 if (is_wp_error($curlall) || wp_remote_retrieve_response_code($curlall) != 200) {
                     return false;
                 }
@@ -333,26 +341,28 @@ get_header();
                         <h6 class="heading_category">Categories</h6>
                         <ul>
                             <li class="active">
-                                <a href="<?php echo site_url(); ?>/<?php echo $mypagename; ?>/?category=all&pageno=1" class="all_category_btn" name="selected_category_btn">All Categories</a>
+                                <a href="<?php echo esc_url(site_url() . "/" . $mypagename . "/?category=all&pageno=1");?>" class="all_category_btn" name="selected_category_btn">All Categories</a>
                             </li>
                             <?php
                             foreach ($resp_body as $retrieved_data1) {
-                                $retrieved_data_query = str_replace(' ', '%20',$retrieved_data1["subCategoryName"]);
+                                $retrieved_data_query = str_replace(' ', '%20', $retrieved_data1["subCategoryName"]);
                             ?>
                                 <li class="<?php if ($sucategoryName == $retrieved_data1["subCategoryName"]) {
                                                 echo 'active';
                                             } ?>">
-                                    <a href=<?php echo site_url() . "/" . $mypagename . "/?category=" . $retrieved_data_query . "&pageno=1" ?> class="selected_category_btn" name="selected_category_btn"><?php echo esc_html($retrieved_data1["subCategoryName"]); ?></a>
+                                    <a href="<?php echo esc_url(site_url() . "/" . $mypagename . "/?category=" . $retrieved_data_query . "&pageno=1"); ?>" class="selected_category_btn" name="selected_category_btn">
+                                        <?php echo esc_html($retrieved_data1["subCategoryName"]); ?>
+                                    </a>
                                 <?php
                             }
-                            ?>
-                            </li>
+                                ?>
+                                </li>
                         </ul>
                     </div>
             </div>
             <div class="col-sm-12 col-md-8 col-lg-9">
                 <?php
-                    if (($categoryName != "all")) {
+                    if ($categoryName != "all") {
                         if (isset($page_no_cat)) {
                 ?>
                         <script>
@@ -370,7 +380,7 @@ get_header();
                         } else if ($dateFormatfromAPi == "MM-dd-yyyy") {
                             $dateFormat = "m-j-Y";
                         }
-                        $curlcatwise = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-list?&companyid=' . $companyID . '&pageSize=10&pageNumber=' . $page_no_cat . '&subcategory=' . $_GET['category'], $api_args);
+                        $curlcatwise = wp_remote_get($viberent_api_url . 'Item/item-list?&companyid=' . $companyID . '&pageSize=10&pageNumber=' . $page_no_cat . '&subcategory=' . $_GET['category'], $api_args);
 
                         if (is_wp_error($curlcatwise) || wp_remote_retrieve_response_code($curlcatwise) != 200) {
                             return false;
@@ -394,20 +404,20 @@ get_header();
                                     if (isset($_POST["my-dates"])) {
                                         $my_from_date = sanitize_text_field($_POST["start-date"]);
                                         $my_to_date = sanitize_text_field($_POST["end-date"]);
-                                        $show_from_date = date($dateFormat, strtotime($_POST["start-date"]));
-                                        $show_to_date = date($dateFormat, strtotime($_POST["end-date"]));
-                                        $start_from_date = date('Y-m-d', strtotime($_POST["start-date"]));
-                                        $end_to_date = date('Y-m-d', strtotime($_POST["end-date"]));
+                                        $show_from_date = date($dateFormat, strtotime($my_from_date));
+                                        $show_to_date = date($dateFormat, strtotime($my_to_date));
+                                        $start_from_date = date('Y-m-d', strtotime($my_from_date));
+                                        $end_to_date = date('Y-m-d', strtotime($my_to_date));
                                     } else {
                                         $start_from_date = date("Y-m-d");
                                         $end_to_date = date("Y-m-d", strtotime($firstRental_showValue));
                                     }
-                                    echo esc_html($show_from_date . " - " . $show_to_date) . "<br/>";
+                                    echo esc_html($show_from_date . " - " . $show_to_date);
                                     ?>
                                 </span> </h5>
                             <?php
                             foreach ($resp_body as $retrieved_datas) {
-                                $curlavail = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-availability?itemGUID=' . $retrieved_datas["itemGUID"] . '&companyid=' . $companyID . '&fromDate=' . $my_from_date . '&todate=' . $my_to_date . '&PeriodTypeId=27&locationID=0', $api_args);
+                                $curlavail = wp_remote_get($viberent_api_url . 'Item/item-availability?itemGUID=' . $retrieved_datas["itemGUID"] . '&companyid=' . $companyID . '&fromDate=' . $my_from_date . '&todate=' . $my_to_date . '&PeriodTypeId=27&locationID=0', $api_args);
                                 if (is_wp_error($curlavail) || wp_remote_retrieve_response_code($curlavail) != 200) {
                                     return false;
                                 }
@@ -415,17 +425,17 @@ get_header();
                                 $respavail = json_decode($responseavail, 1);
                             ?>
                                 <div class="item-category-box ng-star-inserted p-3 p-sm-3 px-xl-5" id="catwise-item-box">
-                                    <form class="m-0" method="post" action="<?php echo site_url(); ?>/<?php echo $mypagename; ?>/?category=<?php echo $query['category']; ?>&pageno=<?php echo $query['pageno']; ?>&action=add&GUID=<?php echo $retrieved_datas['itemGUID']; ?>&rental_period=<?php echo $rentalPeriod; ?>">
+                                    <form class="ajax-layoutbase-form">
                                         <div class=" inner" id="item-on-category-row-2058-0">
                                             <div class="item-display">
                                                 <img src=<?php
                                                             if (empty($retrieved_datas["images"])) {
-                                                                echo "https://viberent.blob.core.windows.net/attachement/no_image.png";
+                                                                echo esc_url($full_path . 'assets/images/no_image.png');
                                                             } else {
                                                                 $count = 0;
                                                                 foreach ($retrieved_datas["images"] as $image) {
                                                                     if ($count == 0) {
-                                                                        echo $image['blobUrl'];
+                                                                        echo esc_url($image['blobUrl']);
                                                                     }
                                                                     $count++;
                                                                 }
@@ -501,47 +511,57 @@ get_header();
                                                 <div class="add-to-cart-component ng-star-inserted">
                                                     <div class="add-to-cart-con with-plusminus">
                                                         <div class="buy-items-btn ng-star-inserted">
-                                                            <input type="hidden" name="image" value="<?php if (empty($retrieved_datas["images"])) {
-                                                                                                            echo "https://viberent.blob.core.windows.net/attachement/no_image.png";
-                                                                                                        } else {
-                                                                                                            $count = 0;
-                                                                                                            foreach ($retrieved_datas["images"] as $image) {
-                                                                                                                if ($count == 0) {
-                                                                                                                    echo $image['blobUrl'];
-                                                                                                                }
-                                                                                                                $count++;
-                                                                                                            }
-                                                                                                        }
-                                                                                                        ?>" />
-                                                            <input type="hidden" name="productAvailable" value="<?php echo esc_attr($respavail[0]['available']); ?>" />
-                                                            <input type="hidden" name="itemCode" value="<?php echo esc_attr($retrieved_datas['itemCode']); ?>" />
-                                                            <input type="hidden" name="itemGUID" value="<?php echo esc_attr($retrieved_datas['itemGUID']); ?>" />
-                                                            <input type="hidden" name="hireTypeID" value="<?php echo esc_attr($retrieved_datas['hireTypeID']); ?>" />
-                                                            <input type="hidden" name="locationID" value="<?php echo esc_attr($retrieved_datas['locationID']); ?>" />
-                                                            <input type="hidden" name="itemName" value="<?php echo esc_attr($retrieved_datas['itemName']); ?>" />
-                                                            <input type="hidden" name="categoryName" value="<?php echo esc_attr($retrieved_datas['categoryName']); ?>" />
-                                                            <input type="hidden" name="rentalratesName" value="<?php echo esc_attr($rentalPeriod); ?>" />
-                                                            <input type="hidden" name="start-date" value="<?php echo esc_attr($start_from_date); ?>" />
-                                                            <input type="hidden" name="end-date" value="<?php echo esc_attr($end_to_date); ?>" />
-                                                            <input type="hidden" name="sessionID" value="<?php echo trim($retrieved_datas['itemGUID'] . $rentalPeriod); ?>" />
-                                                            <input type="number" class="product-quantity" name="quantity" min="1" value="1" size="2" /><input type="submit" name="add_to_cart" value="Add to Cart" class="btnAddAction" />
+                                                            <input type="hidden" class="productimage" name="image" value="<?php if (empty($retrieved_datas["images"])) {
+                                                                echo esc_attr($full_path . 'assets/images/no_image.png');
+                                                                } else {
+                                                                    $count = 0;
+                                                                    foreach ($retrieved_datas["images"] as $image) {
+                                                                        if ($count == 0) {
+                                                                            echo esc_attr($image['blobUrl']);
+                                                                        }
+                                                                            $count++;
+                                                                    }
+                                                                }
+                                                                ?>" />
+                                                            <input type="hidden" class="productAvailable" name="productAvailable" value="<?php echo esc_attr($respavail[0]['available']); ?>" />
+                                                            <input type="hidden" class="itemCode" name="itemCode" value="<?php echo esc_attr($retrieved_datas['itemCode']); ?>" />
+                                                            <input type="hidden" class="itemGUID" name="itemGUID" value="<?php echo esc_attr($retrieved_datas['itemGUID']); ?>" />
+                                                            <input type="hidden" class="hireTypeID" name="hireTypeID" value="<?php echo esc_attr($retrieved_datas['hireTypeID']); ?>" />
+                                                            <input type="hidden" class="locationID" name="locationID" value="<?php echo esc_attr($retrieved_datas['locationID']); ?>" />
+                                                            <input type="hidden" class="itemName" name="itemName" value="<?php echo esc_attr($retrieved_datas['itemName']); ?>" />
+                                                            <input type="hidden" class="categoryName" name="categoryName" value="<?php echo esc_attr($retrieved_datas['categoryName']); ?>" />
+                                                            <input type="hidden" class="rentalratesName" name="rentalratesName" value="<?php echo esc_attr($rentalPeriod); ?>" />
+                                                            <input type="hidden" class="startDate" name="start-date" value="<?php echo esc_attr($start_from_date); ?>" />
+                                                            <input type="hidden" class="endDate" name="end-date" value="<?php echo esc_attr($end_to_date); ?>" />
+                                                            <input type="hidden" class="sessionID" name="sessionID" value="<?php echo trim($retrieved_datas['itemGUID'] . $rentalPeriod); ?>" />
+                                                            <input type="number" class="product-quantity" name="quantity" min="1" value="1" size="2" />
+                                                            <img src="<?php echo plugins_url(); ?>/viberent/assets/images/loading.gif" class="loading" />
+                                                            <input type="submit" name="add_to_cart" value="Add to Cart" class="btnAddAction" />
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="product-quantity-message"><?php
-                                                                                        if (isset($_SESSION["cart_item"])) {
-                                                                                            foreach ($_SESSION["cart_item"] as $item) {
-                                                                                                if ($item["productAvailble"] >= $item["quantity"]) {
-                                                                                                    $productAvailable = $item["quantity"];
-                                                                                                } else {
-                                                                                                    $productAvailable = $item["productAvailble"];
-                                                                                                }
-                                                                                                if ($retrieved_datas['itemGUID'] == $item['GUID'] && $rentalPeriod == $item['rental_period']) {
-                                                                                                    echo "<b>" . esc_attr($productAvailable) . " item(s) added to cart</b>";
-                                                                                                }
-                                                                                            }
-                                                                                        }
-                                                                                        ?></div>
+                                                <div class="product-quantity-message">
+                                                    <?php
+                                                    $count = 0;
+                                                    if (isset($_SESSION["cart_item"])) {
+                                                        foreach ($_SESSION["cart_item"] as $k => $item) {
+                                                            if ($item["productAvailble"] >= $item["quantity"]) {
+                                                                $productAvailable = $item["quantity"];
+                                                            } else {
+                                                                $productAvailable = $item["productAvailble"];
+                                                            }
+                                                            if ($retrieved_datas['itemGUID'] == $item['GUID'] && $rentalPeriod == $item['rental_period']) {
+                                                                $count++;
+                                                            }
+                                                        }
+                                                    ?>
+                                                    <?php
+                                                    }
+                                                    if ($count > 0) {
+                                                        echo "<div class='itemQuantityAvailablediv'><b>" . $count . " item(s) added to cart</b></bb></div>";
+                                                    }
+                                                    ?>
+                                                </div>
                                                 <div class="item-summary pt-2">
                                                     <p class="minimize m-0"><?php echo esc_attr($retrieved_datas["itemDescription"]); ?></p>
                                                 </div>
@@ -571,20 +591,20 @@ get_header();
                                     $pagLink_category = "";
                                     if ($total_pages_cat > 1) {
                                         if ($page_no_cat >= 2) {
-                                            echo "<li class='prev'><span><a href='" . site_url() . "/" . $mypagename . "/?category=" . $query['category'] . "&pageno=" . ($page_no_cat - 1) . "'>Prev</a></span></li>";
+                                            echo "<li class='prev'><span><a href='" . esc_url(site_url() . "/" . $mypagename . "/?category=" . $query['category'] . "&pageno=" . ($page_no_cat - 1) ). "'>Prev</a></span></li>";
                                         }
                                         for ($x = 1; $x <= $page_no_cat; $x++) {
                                             if ($x == $page_no_cat) {
-                                                $pagLink_category .= "<li class='active'><span><a href='" . site_url() . "/" . $mypagename . "/?category=" . $query['category'] . "&pageno="
-                                                    . $x . "'>" . $x . " </a></span></li>";
+                                                $pagLink_category .= "<li class='active'><span><a href='" . esc_url(site_url() . "/" . $mypagename . "/?category=" . $query['category'] . "&pageno="
+                                                    . $x ). "'>" . $x . " </a></span></li>";
                                             } else {
-                                                $pagLink_category .= "<li><span><a href='" . site_url() . "/" . $mypagename . "/?category=" . $query['category'] . "&pageno=" . $x . "'>   
+                                                $pagLink_category .= "<li><span><a href='" . esc_url(site_url() . "/" . $mypagename . "/?category=" . $query['category'] . "&pageno=" . $x ). "'>   
                                             " . $x . " </a></span></li>";
                                             }
                                         }
                                         if ($page_no_cat < $total_pages_cat) {
                                             $pagLink_category .= '<li class="disabled"><span>...</span></li>';
-                                            $pagLink_category .= "<li><span><a href='" . site_url() . "/" . $mypagename . "/?category=" . $query['category'] . "&pageno=" . ($page_no_cat + 1) . "'>Next</a></span></li>";
+                                            $pagLink_category .= "<li><span><a href='" . esc_url(site_url() . "/" . $mypagename . "/?category=" . $query['category'] . "&pageno=" . ($page_no_cat + 1) ). "'>Next</a></span></li>";
                                         }
                                         echo $pagLink_category;
                                     }
@@ -610,20 +630,20 @@ get_header();
                                 if (isset($_POST["my-dates"])) {
                                     $my_from_date = sanitize_text_field($_POST["start-date"]);
                                     $my_to_date = sanitize_text_field($_POST["end-date"]);
-                                    $show_from_date = date($dateFormat, strtotime($_POST["start-date"]));
-                                    $show_to_date = date($dateFormat, strtotime($_POST["end-date"]));
-                                    $start_from_date = date('Y-m-d', strtotime($_POST["start-date"]));
-                                    $end_to_date = date('Y-m-d', strtotime($_POST["end-date"]));
+                                    $show_from_date = date($dateFormat, strtotime($my_from_date));
+                                    $show_to_date = date($dateFormat, strtotime($my_to_date));
+                                    $start_from_date = date('Y-m-d', strtotime($my_from_date));
+                                    $end_to_date = date('Y-m-d', strtotime($my_to_date));
                                 } else {
                                     $start_from_date = date("Y-m-d");
                                     $end_to_date = date("Y-m-d", strtotime($firstRental_showValue));
                                 }
-                                echo sanitize_text_field($show_from_date) . " - " . sanitize_text_field($show_to_date) . "<br/>";
+                                echo sanitize_text_field($show_from_date) . " - " . sanitize_text_field($show_to_date);
                                 ?>
                             </span> </h5>
                         <?php
                         foreach ($resp3 as $retrieved_data) {
-                            $curlavail = wp_remote_get('https://viberent-api.azurewebsites.net/api/Item/item-availability?itemGUID=' . $retrieved_data["itemGUID"] . '&companyid=' . $companyID . '&fromDate=' . $my_from_date . '&todate=' . $my_to_date . '&PeriodTypeId=27&locationID=0', $api_args);
+                            $curlavail = wp_remote_get($viberent_api_url . 'Item/item-availability?itemGUID=' . $retrieved_data["itemGUID"] . '&companyid=' . $companyID . '&fromDate=' . $my_from_date . '&todate=' . $my_to_date . '&PeriodTypeId=27&locationID=0', $api_args);
                             if (is_wp_error($curlavail) || wp_remote_retrieve_response_code($curlavail) != 200) {
                                 return false;
                             }
@@ -631,19 +651,17 @@ get_header();
                             $respavail = json_decode($responseavail, 1);
                         ?>
                             <div class="item-category-box ng-star-inserted p-3 p-sm-3 px-xl-5" id="all-item-box">
-                                <form class="m-0 1" method="post" action="<?php echo site_url();
-                                                                            if (isset($query['pageno'])) { ?>/<?php echo $mypagename; ?>/?pageno=<?php echo $query['pageno'];
-                                                                            } else { ?>/<?php echo $mypagename; ?>/?pageno=1<?php } ?>&action=add&GUID=<?php echo $retrieved_data['itemGUID']; ?>&rental_period=<?php echo $rentalPeriod; ?>">
+                                <form class="ajax-layoutbase-form">
                                     <div class="inner" id="item-on-category-row-2058-0" data-itemid="56971">
                                         <div class="item-display">
                                             <img src=<?php
                                                         if (empty($retrieved_data["images"])) {
-                                                            echo "https://viberent.blob.core.windows.net/attachement/no_image.png";
+                                                            echo esc_url($full_path . 'assets/images/no_image.png');
                                                         } else {
                                                             $count = 0;
                                                             foreach ($retrieved_data["images"] as $image) {
                                                                 if ($count == 0) {
-                                                                    echo $image['blobUrl'];
+                                                                    echo esc_url($image['blobUrl']);
                                                                 }
                                                                 $count++;
                                                             }
@@ -721,44 +739,53 @@ get_header();
                                                 </p>
                                             </div>
                                             <div class="add-to-cart-component ng-star-inserted">
-                                                <input type="hidden" name="image" value="<?php if (empty($retrieved_data["images"])) {
-                                                                                                echo "https://viberent.blob.core.windows.net/attachement/no_image.png";
-                                                                                            } else {
-                                                                                                $count = 0;
-                                                                                                foreach ($retrieved_data["images"] as $image) {
-                                                                                                    if ($count == 0) {
-                                                                                                        echo $image['blobUrl'];
-                                                                                                    }
-                                                                                                    $count++;
-                                                                                                }
-                                                                                            }
-                                                                                            ?>" />
-                                                <input type="hidden" name="productAvailable" value="<?php echo esc_attr($respavail[0]['available']); ?>" />
-                                                <input type="hidden" name="itemCode" value="<?php echo esc_attr($retrieved_data['itemCode']); ?>" />
-                                                <input type="hidden" name="itemGUID" value="<?php echo esc_attr($retrieved_data['itemGUID']); ?>" />
-                                                <input type="hidden" name="hireTypeID" value="<?php echo esc_attr($retrieved_data['hireTypeID']); ?>" />
-                                                <input type="hidden" name="locationID" value="<?php echo esc_attr($retrieved_data['locationID']); ?>" />
-                                                <input type="hidden" name="itemName" value="<?php echo esc_attr($retrieved_data['itemName']); ?>" />
-                                                <input type="hidden" name="categoryName" value="<?php echo esc_attr($retrieved_data['categoryName']); ?>" />
-                                                <input type="hidden" name="rentalratesName" value="<?php echo esc_attr($rentalPeriod); ?>" />
-                                                <input type="hidden" name="start-date" value="<?php echo esc_attr($start_from_date); ?>" />
-                                                <input type="hidden" name="end-date" value="<?php echo esc_attr($end_to_date); ?>" />
-                                                <input type="hidden" name="sessionID" value="<?php echo trim($retrieved_data['itemGUID'] . $rentalPeriod); ?>" />
-                                                <input type="number" class="product-quantity" name="quantity" min="1" value="1" size="2" /><input type="submit" name="add_to_cart" value="Add to Cart" class="btnAddAction" />
+                                                <input type="hidden" class="productimage" name="image" value="<?php if (empty($retrieved_data["images"])) {
+                                                    echo esc_attr($full_path . 'assets/images/no_image.png');
+                                                    } else {
+                                                        $count = 0;
+                                                        foreach ($retrieved_data["images"] as $image) {
+                                                            if ($count == 0) {
+                                                                echo esc_attr($image['blobUrl']);
+                                                            }
+                                                            $count++;
+                                                        }
+                                                    }
+                                                    ?>" />
+                                                <input type="hidden" class="productAvailable" name="productAvailable" value="<?php echo esc_attr($respavail[0]['available']); ?>" />
+                                                <input type="hidden" class="itemCode" name="itemCode" value="<?php echo esc_attr($retrieved_data['itemCode']); ?>" />
+                                                <input type="hidden" class="itemGUID" name="itemGUID" value="<?php echo esc_attr($retrieved_data['itemGUID']); ?>" />
+                                                <input type="hidden" class="hireTypeID" name="hireTypeID" value="<?php echo esc_attr($retrieved_data['hireTypeID']); ?>" />
+                                                <input type="hidden" class="locationID" name="locationID" value="<?php echo esc_attr($retrieved_data['locationID']); ?>" />
+                                                <input type="hidden" class="itemName" name="itemName" value="<?php echo esc_attr($retrieved_data['itemName']); ?>" />
+                                                <input type="hidden" class="categoryName" name="categoryName" value="all" />
+                                                <input type="hidden" class="rentalratesName" name="rentalratesName" value="<?php echo esc_attr($rentalPeriod); ?>" />
+                                                <input type="hidden" class="startDate" name="start-date" value="<?php echo esc_attr($start_from_date); ?>" />
+                                                <input type="hidden" class="endDate" name="end-date" value="<?php echo esc_attr($end_to_date); ?>" />
+                                                <input type="hidden" class="sessionID" name="sessionID" value="<?php echo trim($retrieved_data['itemGUID'] . $rentalPeriod); ?>" />
+                                                <input type="number" class="product-quantity" name="quantity" min="1" value="1" size="2" />
+                                                <img src="<?php echo plugins_url(); ?>/viberent/assets/images/loading.gif" class="loading" />
+                                                <input type="submit" name="add_to_cart" value="Add to Cart" class="btnAddAction" />
                                             </div>
                                             <div class="product-quantity-message">
                                                 <?php
+                                                $count = 0;
                                                 if (isset($_SESSION["cart_item"])) {
-                                                    foreach ($_SESSION["cart_item"] as $item) {
+                                                    foreach ($_SESSION["cart_item"] as $k => $item) {
                                                         if ($item["productAvailble"] >= $item["quantity"]) {
                                                             $productAvailable = $item["quantity"];
                                                         } else {
                                                             $productAvailable = $item["productAvailble"];
                                                         }
+                                                        $sessionID = $retrieved_data['itemGUID'] . $rentalPeriod . $k . $start_from_date;
                                                         if ($retrieved_data['itemGUID'] == $item['GUID'] && $rentalPeriod == $item['rental_period']) {
-                                                            echo "<b>" . esc_attr($productAvailable) . " item(s) added to cart</b>";
+                                                            $count++;
                                                         }
                                                     }
+                                                ?>
+                                                <?php
+                                                }
+                                                if ($count > 0) {
+                                                    echo "<div class='itemQuantityAvailablediv'><b>" . $count . " item(s) added to cart</b></bb></div>";
                                                 }
                                                 ?>
                                             </div>
@@ -787,22 +814,22 @@ get_header();
                                 $pagLink = "";
                                 if ($total_pages > 1) {
                                     if ($page_nos >= 2) {
-                                        echo "<li class='prev'><span><a href='" . site_url() . "/" . $mypagename . "/?pageno=" . ($page_nos - 1) . "'>Prev</a></span></li>";
+                                        echo "<li class='prev'><span><a href='" . esc_url(site_url() . "/" . $mypagename . "/?pageno=" . ($page_nos - 1) ). "'>Prev</a></span></li>";
                                     }
                                     for ($x = 1; $x <= $page_nos; $x++) {
                                         $query['pageno'] =  $x;
                                         $query_result = http_build_query($query);
                                         if ($x == $page_nos) {
-                                            $pagLink .= "<li class='active'><span><a href='" . site_url() . "/" . $mypagename . "/?pageno="
-                                                . $x . "'>" . $x . " </a></span></li>";
+                                            $pagLink .= "<li class='active'><span><a href='" . esc_url(site_url() . "/" . $mypagename . "/?pageno="
+                                                . $x ). "'>" . $x . " </a></span></li>";
                                         } else {
-                                            $pagLink .= "<li><span><a href='" . site_url() . "/" . $mypagename . "/?pageno=" . $x . "'>   
+                                            $pagLink .= "<li><span><a href='" . esc_url(site_url() . "/" . $mypagename . "/?pageno=" . $x ). "'>   
                                                     " . $x . " </a></span></li>";
                                         }
                                     }
                                     if ($page_nos < $total_pages) {
                                         $pagLink .= '<li class="disabled"><span>...</span></li>';
-                                        $pagLink .= "<li><span><a href='" . site_url() . "/" . $mypagename . "/?pageno=" . ($page_nos + 1) . "'>Next</a></span></li>";
+                                        $pagLink .= "<li><span><a href='" . esc_url(site_url() . "/" . $mypagename . "/?pageno=" . ($page_nos + 1) ). "'>Next</a></span></li>";
                                     }
                                     echo $pagLink;
                                 }
@@ -833,7 +860,7 @@ get_header();
                 <div></div>
             </div>
             <h4 class="text-uppercase font-weight-bold">Loading Data</h4>
-            <p class="font-italic text-muted">This loading window will be removed after <strong class="countdown text-dark font-weight-bold">7 </strong> Seconds</p>
+            <p class="font-italic text-muted">This loading window will be removed after <strong class="countdown text-dark font-weight-bold">3 </strong> Seconds</p>
         </div>
     </div>
 </div>
