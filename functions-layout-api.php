@@ -1,10 +1,12 @@
 <?php
-function get_page_id_by_title($title)
+global $viberent_api_url;
+$viberent_api_url = 'https://viberent-api.azurewebsites.net/api/';
+function viberent_get_page_id_by_title($title)
 {
     $page = get_page_by_title($title);
     return $page->ID;
 }
-function create_page($title_of_the_page, $parent_id = NULL)
+function viberent_create_page($title_of_the_page, $parent_id = NULL)
 {
     $objPage = get_page_by_title($title_of_the_page, 'OBJECT', 'page');
     if (!empty($objPage)) {
@@ -29,7 +31,7 @@ function create_page($title_of_the_page, $parent_id = NULL)
 }
 function viberent_init()
 {
-    global $wpdb;
+    global $wpdb, $viberent_api_url;
     $charset_collate = $wpdb->get_charset_collate();
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
@@ -73,7 +75,7 @@ function viberent_init()
   ) $charset_collate;";
     dbDelta($sql);
 
-    $table_addTocart = $wpdb->prefix . 'tbl_product';
+    $table_addTocart = $wpdb->prefix . 'viberent_tbl_product';
     $sql = "CREATE TABLE $table_addTocart (
     id int(11) NOT NULL AUTO_INCREMENT,
     sessionID varchar(255) NOT NULL,
@@ -82,6 +84,7 @@ function viberent_init()
     quantity int(10) NOT NULL,
     product_image varchar(255) NOT NULL,
     code varchar(255) NOT NULL,
+    productAvailable varchar(255) NOT NULL,
     GUID varchar(255) NOT NULL,
     hireTypeID varchar(255) NOT NULL,
     locationID varchar(255) NOT NULL,
@@ -94,7 +97,7 @@ function viberent_init()
     ) $charset_collate;";
     dbDelta($sql);
 
-    $QuoteNumber = $wpdb->prefix . 'quote_number';
+    $QuoteNumber = $wpdb->prefix . 'viberent_quote_number';
     $sql = "CREATE TABLE $QuoteNumber (
     id int(11) NOT NULL AUTO_INCREMENT,
     QuoteNumber TEXT NOT NULL,
@@ -128,16 +131,14 @@ function viberent_init()
 <div id="full_page_viberent_plugin">
     <div>
         <form method="post" id="viberent_plugin_login_form">
-            <br>
-            <div style="display: flex; justify-content: center;">
+            <div class="viberent_login_logo">
                 <img id="viberent_logo" src="<?php echo plugin_dir_url(__FILE__) . 'assets/images/VibeRent-LOGO.png'; ?>">
-            </div><br>
-            <div id="LoginForm" class="container" style="background-color: white; width: 40%; margin: auto; border: 1px solid rgba(147, 184, 189,0.8); box-shadow: 0pt 2px 5px rgb(105 108 109 / 70%), 0px 0px 8px 5px rgb(208 223 226 / 40%) inset;">
+            </div>
+            <div id="LoginForm" class="container">
                 <h3>LOGIN</h3>
-                <label for="password"><b>Api Key</b></label><br>
-                <input type="password" placeholder="Enter Api Key" name="password" id="password" required><br><br>
+                <label for="password"><b>Api Key</b></label>
+                <input type="password" placeholder="Enter Api Key" name="password" id="password" required>
                 <button type="submit" id="login" name="submit">LOGIN</button>
-                <br><br>
             </div>
         </form>
     </div>
@@ -160,33 +161,32 @@ function viberent_init()
         $chooseLayout = isset($_POST['chosen_layout']) ? (sanitize_text_field($_POST['chosen_layout'])) : sanitize_text_field($chooseLayout);
         echo "<b>Company Name:</b> ";
         echo sanitize_text_field($result[0]->companyName);
-        echo "</br>";
         ?>
         <form method="post" id="layout_options_form" name="layout_options_form">
-            <p id="plz_choos_layout">Please choose the layout for your shop:</p><br>
+            <p id="plz_choos_layout">Please choose the layout for your shop:</p>
             <div id="layout_options">
                 <div>
                     <input type="radio" id="radio_item_based" name="chosen_layout" value="item-based" <?php if ($chooseLayout == 'item-based') { echo "checked"; } ?>>
                     <label for="radio_item_based">
-                        Item-based listing<br>
+                        Item-based listing
                         <img id="layout_option_img" src="<?php echo plugin_dir_url(__FILE__) . 'assets/images/item.png'; ?>">
 
-                    </label><br><br>
+                    </label>
                 </div>
                 <div>
                     <input type="radio" id="radio_category_based" name="chosen_layout" value="category-based" <?php if ($chooseLayout == 'category-based') { echo "checked"; } ?>>
                     <label for="radio_category_based">
-                        Category-based listing<br>
+                        Category-based listing
                         <img id="layout_option_img" src="<?php echo plugin_dir_url(__FILE__) . 'assets/images/category.png'; ?>">
-                    </label><br><br>
+                    </label>
                 </div>
             </div>
-            <label for="pagename"></label><br>
+            <label for="pagename"></label>
             <?php
-            $resuli = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
-            if (empty($resuli)) {
+            $viberent_mypagename = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
+            if (empty($viberent_mypagename)) {
             ?>
-                <input type="text" id="pagename" name="pagename" placeholder="Enter the page name for your shop here" required><br>
+                <input type="text" id="pagename" class="viberent_pagename" name="pagename" placeholder="Enter the page name for your shop here" required>
             <?php
             }
             ?>
@@ -198,34 +198,34 @@ function viberent_init()
             </button>
         </form>
         <?php
-        $resulu = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_layout");
-        $resuli = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
-        if (!empty($resulu)) {
-            if (!empty($resuli)) {
-                $page_id_one = create_page('My cart');
+        $viberent_mylayout = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_layout");
+        $viberent_mypagename = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
+        if (!empty($viberent_mylayout)) {
+            if (!empty($viberent_mypagename)) {
+                $page_id_one = viberent_create_page('My cart');
                 update_post_meta($page_id_one, '_wp_page_template', 'templates/my_cart.php');
-                $page_id_two = create_page('Place my order');
+                $page_id_two = viberent_create_page('Place my order');
                 update_post_meta($page_id_two, '_wp_page_template', 'templates/place_my_order.php');
-                $page_id_three = create_page('Thank shopping');
+                $page_id_three = viberent_create_page('Thank shopping');
                 update_post_meta($page_id_three, '_wp_page_template', 'templates/thank_shopping.php');
 
-                if ($resulu[0]->selected_layout == "item-based") {
-                    $page_id = create_page($resuli[0]->pagename);
+                if ($viberent_mylayout[0]->selected_layout == "item-based") {
+                    $page_id = viberent_create_page($viberent_mypagename[0]->pagename);
                     update_post_meta($page_id, '_wp_page_template', 'templates/item_based.php');
                 }
-                if ($resulu[0]->selected_layout == "category-based") {
-                    $page_id = create_page($resuli[0]->pagename);
+                if ($viberent_mylayout[0]->selected_layout == "category-based") {
+                    $page_id = viberent_create_page($viberent_mypagename[0]->pagename);
                     update_post_meta($page_id, '_wp_page_template', 'templates/category_based.php');
                 }
             }
         }
     }
     if (isset($_POST["logout"])) {
-        $resuli = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
-        $page_id = get_page_id_by_title($resuli[0]->pagename, $post_type = 'page');
-        $page_id_one = get_page_id_by_title('My cart', $post_type = 'page');
-        $page_id_two = get_page_id_by_title('Place my order', $post_type = 'page');
-        $page_id_three = get_page_id_by_title('Thank shopping', $post_type = 'page');
+        $viberent_mypagename = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
+        $page_id = viberent_get_page_id_by_title($viberent_mypagename[0]->pagename, $post_type = 'page');
+        $page_id_one = viberent_get_page_id_by_title('My cart', $post_type = 'page');
+        $page_id_two = viberent_get_page_id_by_title('Place my order', $post_type = 'page');
+        $page_id_three = viberent_get_page_id_by_title('Thank shopping', $post_type = 'page');
 
         $wpdb->delete($wpdb->prefix  . 'posts', array('ID' => $page_id));
         $wpdb->delete($wpdb->prefix  . 'posts', array('ID' => $page_id_one));
@@ -241,8 +241,8 @@ function viberent_init()
         <?php
     }
     if (isset($_POST["submit"])) {
-        $password = $_POST["password"];
-        $response = wp_remote_get('https://viberent-api.azurewebsites.net/api/Customer/login-details?ApiSecretKey=' . $password);
+        $password = sanitize_text_field($_POST["password"]);
+        $response = wp_remote_get($viberent_api_url . 'Customer/login-details?ApiSecretKey=' . $password);
         $body     = wp_remote_retrieve_body($response);
         $resp = json_decode($body, 1);
         $mypassword = array(
@@ -267,27 +267,26 @@ function viberent_init()
                 if (isset($chooseLayout[0])) {
                     $chooseLayout = $chooseLayout[0]->selected_layout;
                 }
-                $chooseLayout = isset($_POST['chosen_layout']) ? ($_POST['chosen_layout']) : $chooseLayout;
-                echo "</br><b>Company Name:</b> ";
+                $chooseLayout = isset($_POST['chosen_layout']) ? sanitize_text_field($_POST['chosen_layout']) : sanitize_text_field($chooseLayout);
+                echo "<b>Company Name:</b> ";
                 echo sanitize_text_field($result[0]->companyName);
-                echo "</br>";
                 ?>
                 <form method="post" id="layout_options_form">
-                    <p>Please choose the layout for your shop:</p><br>
+                    <p>Please choose the layout for your shop:</p>
                     <div id="layout_options">
                         <div>
                             <input type="radio" id="radio_item_based" name="chosen_layout" value="item-based" <?php if ($chooseLayout == 'item-based') { echo "checked"; } ?>>
                             <label for="radio_item_based">
-                                Item-based listing<br>
+                                Item-based listing
                                 <img id="layout_option_img" src="<?php echo plugin_dir_url(__FILE__) . 'assets/images/item.png'; ?>">
-                            </label><br><br>
+                            </label>
                         </div>
                         <div>
                             <input type="radio" id="radio_category_based" name="chosen_layout" value="category-based" <?php if ($chooseLayout == 'category-based') { echo "checked";} ?>>
                             <label for="radio_category_based">
-                                Category-based listing<br>
+                                Category-based listing
                                 <img id="layout_option_img" src="<?php echo plugin_dir_url(__FILE__) . 'assets/images/category.png'; ?>">
-                            </label><br><br>
+                            </label>
                         </div>
                     </div>
                     <button type="submit" id="radio_layout_submit" name="radio_layout_submit">Save</button>
@@ -299,22 +298,22 @@ function viberent_init()
                 </form>
         <?php
             }
-            $resulu = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_layout");
-            $resuli = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
-            if (!empty($resulu)) {
-                if (!empty($resuli)) {
-                    $page_id_one = create_page('My cart');
+            $viberent_mylayout = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_layout");
+            $viberent_mypagename = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
+            if (!empty($viberent_mylayout)) {
+                if (!empty($viberent_mypagename)) {
+                    $page_id_one = viberent_create_page('My cart');
                     update_post_meta($page_id_one, '_wp_page_template', 'templates/my_cart.php');
-                    $page_id_two = create_page('Place my order');
+                    $page_id_two = viberent_create_page('Place my order');
                     update_post_meta($page_id_two, '_wp_page_template', 'templates/place_my_order.php');
-                    $page_id_three = create_page('Thank shopping');
+                    $page_id_three = viberent_create_page('Thank shopping');
                     update_post_meta($page_id_three, '_wp_page_template', 'templates/thank_shopping.php');
-                    if ($resulu[0]->selected_layout == "item-based") {
-                        $page_id = create_page($resuli[0]->pagename);
+                    if ($viberent_mylayout[0]->selected_layout == "item-based") {
+                        $page_id = viberent_create_page($viberent_mypagename[0]->pagename);
                         update_post_meta($page_id, '_wp_page_template', 'templates/item_based.php');
                     }
-                    if ($resulu[0]->selected_layout == "category-based") {
-                        $page_id = create_page($resuli[0]->pagename);
+                    if ($viberent_mylayout[0]->selected_layout == "category-based") {
+                        $page_id = viberent_create_page($viberent_mypagename[0]->pagename);
                         update_post_meta($page_id, '_wp_page_template', 'templates/category_based.php');
                     }
                 }
@@ -325,13 +324,13 @@ function viberent_init()
     }
     if (isset($_POST["radio_layout_submit"])) {
         $resul = $wpdb->get_results("SELECT * from $table_name");
-        $resulu = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_layout");
+        $viberent_mylayout = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_layout");
         $item_layout = array(
             "companyID" => $resul[0]->companyID,
             "useName" => $resul[0]->useName,
-            "selected_layout" => $_POST["chosen_layout"]
+            "selected_layout" => sanitize_text_field($_POST["chosen_layout"])
         );
-        if (empty($resulu)) {
+        if (empty($viberent_mylayout)) {
             $wpdb->insert($wpdb->prefix . 'viberent_layout', $item_layout);
         } else {
             $wpdb->query("TRUNCATE TABLE " . $wpdb->prefix  . "viberent_layout");
@@ -341,7 +340,7 @@ function viberent_init()
             $mypagearr = array(
                 "companyID" => $resul[0]->companyID,
                 "useName" => $resul[0]->useName,
-                "pagename" => $_POST["pagename"]
+                "pagename" => sanitize_text_field($_POST["pagename"])
             );
             $wpdb->insert($wpdb->prefix . 'viberent_pagename', $mypagearr);
         }
@@ -354,11 +353,11 @@ function viberent_init()
     $rows = $wpdb->get_results("SELECT companyID from " . $wpdb->prefix . "viberent_layout WHERE `companyID` IS NOT NULL");
     $my_selected_layout = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_layout WHERE `companyID` IS NOT NULL");
     if (count($rows) != 0) {
-        $resuli = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
-        if (!empty($resuli)) {
-            $slug_name = sanitize_title($resuli[0]->pagename);
+        $viberent_mypagename = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
+        if (!empty($viberent_mypagename)) {
+            $slug_name = sanitize_title($viberent_mypagename[0]->pagename);
         ?>
-            <div id="chosen_message" style="display:none;">
+            <div id="chosen_message">
                 <a href="<?php echo site_url() . "/" . $slug_name; ?>" type="button" target="_blank" id="change_selected_layout" name="change_selected_layout">Go to the <?php echo $my_selected_layout[0]->selected_layout; ?> layout </a>
             </div>
     <?php
@@ -378,19 +377,19 @@ function viberent_register_styles()
     wp_register_style('PlaceOrder', plugins_url('assets/css/place_order.css', __FILE__));
     wp_register_style('thanks', plugins_url('assets/css/thank.css', __FILE__));
 
-    wp_register_script('viberent_style', plugins_url('assets/js/moment.min.js', __FILE__));
-    wp_register_script('jqueryJs', plugins_url('assets/js/jquery.js', __FILE__));
+    wp_register_script('viberent_style', includes_url('js/dist/vendor/moment.min.js', __FILE__));
+    wp_register_script('jqueryJs', includes_url('js/jquery/jquery.js', __FILE__));
     wp_register_script('bootstrap', plugins_url('assets/js/bootstrap.js', __FILE__));
 }
 add_action('wp_enqueue_scripts', 'viberent_enqueue_styles');
 function viberent_enqueue_styles()
 {
     global $wpdb;
-    $resuli = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
-    $page_id = create_page($resuli[0]->pagename);
-    $page_id_one = create_page('My cart');
-    $page_id_two = create_page('Place my order');
-    $page_id_three = create_page('Thank shopping');
+    $viberent_mypagename = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
+    $page_id = viberent_create_page($viberent_mypagename[0]->pagename);
+    $page_id_one = viberent_create_page('My cart');
+    $page_id_two = viberent_create_page('Place my order');
+    $page_id_three = viberent_create_page('Thank shopping');
     if (is_page($page_id) || is_page($page_id_one) || is_page($page_id_two) || is_page($page_id_three)) {
         wp_enqueue_style('fontawesome');
         wp_enqueue_style('customCss');
@@ -413,14 +412,36 @@ add_action('wp_head', 'viberent_add_script_wp_head');
 function viberent_add_script_wp_head()
 {
     global $wpdb;
-    $resuli = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
-    $page_id = create_page($resuli[0]->pagename);
-    $page_id_one = create_page('My cart');
-    $page_id_two = create_page('Place my order');
-    $page_id_three = create_page('Thank shopping');
+    $viberent_mypagename = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
+    $page_id = viberent_create_page($viberent_mypagename[0]->pagename);
+    $page_id_one = viberent_create_page('My cart');
+    $page_id_two = viberent_create_page('Place my order');
+    $page_id_three = viberent_create_page('Thank shopping');
     if (is_page($page_id) || is_page($page_id_one) || is_page($page_id_two) || is_page($page_id_three)) {
        wp_register_script('templateCustom', plugins_url('assets/js/templateCustom.js', __FILE__));
        wp_enqueue_script('templateCustom');
     }
 }
+
+add_action('wp_enqueue_scripts', 'viberent_ajax_enqueue_scripts');
+function viberent_ajax_enqueue_scripts()
+{
+    wp_register_script(
+        'ajaxHandle',
+        plugins_url('assets/js/layout-admin-ajax.js', __FILE__),
+        array(),
+        false,
+        true
+    );
+    wp_enqueue_script('ajaxHandle');
+    wp_localize_script(
+        'ajaxHandle',
+        'ajax_object',
+        array('ajaxurl' => admin_url('admin-ajax.php'))
+    );
+}
+
+
+include_once(VIBERENT__PLUGIN_DIR . 'templates/layout_page_ajax.php');
+
 ?>
