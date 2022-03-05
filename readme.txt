@@ -13,7 +13,18 @@ License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 == Description ==
 
-Login To Viberent is a plugin created to fetch product details from viberent system as per the entered login credentials.
+* Login To Viberent is a plugin created to fetch product details from viberent system as per the entered login api key.
+* Viberent is a SAAS cloud-based rental management system that allows equipment rental businesses to further improve their rental operations through strong inventory management, invoicing integration to Xero, MYOB and QBO, and much more.
+* Data is accessed as per the entered api key, which is unique for users and users can connect to the viberent system and their own data via the api calls in the plugin. 
+
+== Link to the viberent system ==
+https://login.viberenthq.com/
+
+== Terms & Conditions: ==
+https://viberenthq.com/terms-conditions/
+
+== Privacy Policy: ==
+https://viberenthq.com/privacy-policy/
 
 == Features: ==
 
