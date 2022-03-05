@@ -1,6 +1,9 @@
 <?php
-$query = $_GET;
 global $wpdb;
+$query = $_GET;
+$full_path = explode('templates', plugin_dir_url(__FILE__));
+array_pop($full_path);
+$full_path = implode('templates', $full_path); 
 $query_result = http_build_query($query);
 if (isset($_GET['pageno'])) {
     $page_no_cat = sanitize_text_field($_GET['pageno']);
@@ -18,7 +21,7 @@ if (!empty($result)) {
         'CompanyId' => $companyID
     )
 ); 
-    $responseperiod = wp_remote_get('https://viberent-api.azurewebsites.net/api/item/rental-periodtype?companyid=' . $companyID, $api_args);
+    $responseperiod = wp_remote_get($viberent_api_url . 'item/rental-periodtype?companyid=' . $companyID, $api_args);
     if (is_wp_error($responseperiod) || wp_remote_retrieve_response_code($responseperiod) != 200) {
       return false;
     }
@@ -30,7 +33,7 @@ if (!empty($result)) {
         $firstRental_period = $myresp["name"];
         $firstRental_value = $myresp["value"];
         $startDate = date("Y-m-d");
-        if(($myresp["name"] == "Exclude Sat / Sun") || ($myresp["name"] == "Exclude Sat / Sun Daily")){
+        if( ($myresp["name"] == "Exclude Sat / Sun") || ($myresp["name"] == "Exclude Sat / Sun Daily") ){
                 $d = new DateTime($startDate);
                 $t = $d->getTimestamp();
                 // loop for X days
@@ -76,13 +79,10 @@ if (!empty($result)) {
     } else {
         $rental_period = sanitize_text_field($firstRental_period);
     }
-}else{
-    echo "Please login to the vibrent";
 }
-$resuli = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
-if (!empty($resuli)) {
-    $mypagetitle = sanitize_title($resuli[0]->pagename);
-    $mypagename = sanitize_title($mypagetitle);
+$viberent_mypagename = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
+if (!empty($viberent_mypagename)) {
+    $mypagename = sanitize_title($viberent_mypagename[0]->pagename);
 }
 if (isset($_GET["category"])) {
     $categoryName = sanitize_text_field($_GET["category"]);
@@ -105,7 +105,7 @@ if (isset($_POST["add_to_cart"]) && $_GET["action"] && isset($_GET["GUID"]) && i
         "endDate" => sanitize_text_field($_POST["end-date"]),
         "sessionID" => sanitize_text_field($_POST["sessionID"])
     );
-    $results = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "tbl_product WHERE GUID ='" . $_GET["GUID"] . "' AND rental_period='" . $_GET["rental_period"] . "'");
+    $results = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "viberent_tbl_product WHERE GUID ='" . $_GET["GUID"] . "' AND rental_period='" . $_GET["rental_period"] . "'");
     $GUID = array();
     $rentalPeriod = array();
     foreach ($results as $val) {
@@ -113,14 +113,14 @@ if (isset($_POST["add_to_cart"]) && $_GET["action"] && isset($_GET["GUID"]) && i
         $rentalPeriod = sanitize_text_field($val->rental_period);
     }
     if ($GUID != $_GET["GUID"] || $rentalPeriod != $_GET["rental_period"]) {
-        $wpdb->insert($wpdb->prefix . 'tbl_product', $item_layout);
+        $wpdb->insert($wpdb->prefix . 'viberent_tbl_product', $item_layout);
     }
 }
 if (!empty($_GET["action"])) {
     switch ($_GET["action"]) {
         case "add":
             if (!empty($_POST["quantity"])) {
-                $productByCode = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "tbl_product WHERE GUID='" . $_GET["GUID"] . "' AND rental_period='" . $_GET["rental_period"] . "'");
+                $productByCode = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "viberent_tbl_product WHERE GUID='" . $_GET["GUID"] . "' AND rental_period='" . $_GET["rental_period"] . "'");
                 $itemArray = array($productByCode[0]->sessionID => array(
                     'product_name' => $productByCode[0]->product_name,
                     'code' => $productByCode[0]->code,
@@ -132,7 +132,7 @@ if (!empty($_GET["action"])) {
                     'product_image' => $productByCode[0]->product_image,
                     'rental_period' => $productByCode[0]->rental_period,
                     'startDate' => $productByCode[0]->startDate,
-                    'productAvailble' => $_POST["productAvailable"],
+                    'productAvailble' => sanitize_text_field($_POST["productAvailable"]),
                     'endDate' => $productByCode[0]->endDate,
                     'sessionID' => $productByCode[0]->sessionID
                 ));
@@ -156,7 +156,7 @@ if (!empty($_GET["action"])) {
             break;
         case "empty":
             unset($_SESSION["cart_item"]);
-            $wpdb->query("TRUNCATE TABLE " . $wpdb->prefix  . "tbl_product");
+            $wpdb->query("TRUNCATE TABLE " . $wpdb->prefix  . "viberent_tbl_product");
             break;
     }
 }
@@ -184,13 +184,13 @@ $api_args = array( 'timeout' => 10,
         'CompanyId' => $companyID
     )
 ); 
-$curlgetcategorylist = wp_remote_get('https://viberent-api.azurewebsites.net/api/item/subcategories?companyid=' . $companyID .  '&pageSize=10&pageNumber=' . $page_no, $api_args);
+$curlgetcategorylist = wp_remote_get($viberent_api_url . 'item/subcategories?companyid=' . $companyID .  '&pageSize=10&pageNumber=' . $page_no, $api_args);
 if (is_wp_error($curlgetcategorylist) || wp_remote_retrieve_response_code($curlgetcategorylist) != 200) {
     return false;
 }
 $response_body = wp_remote_retrieve_body($curlgetcategorylist);
 $resp_body = json_decode($response_body, 1);
-$curlperiod = wp_remote_get('https://viberent-api.azurewebsites.net/api/item/rental-periodtype?companyid=' . $companyID, $api_args);
+$curlperiod = wp_remote_get($viberent_api_url . 'item/rental-periodtype?companyid=' . $companyID, $api_args);
 if (is_wp_error($curlperiod) || wp_remote_retrieve_response_code($curlperiod) != 200) {
     return false;
 }
@@ -205,9 +205,8 @@ if ($dateFormatfromAPi == "dd/MM/yyyy") {
 } else if ($dateFormatfromAPi == "MM-dd-yyyy") {
     $date_Format = "MM-DD-YYYY";
 }
-if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 1800)) {
-    // last request was more than 30 minutes ago
-    session_unset();     // unset $_SESSION variable for the run-time 
-    session_destroy();   // destroy session data in storage
-    $wpdb->query("TRUNCATE TABLE " . $wpdb->prefix  . "tbl_product");
+if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY'] > 21600)) {
+    session_unset(); 
+    session_destroy();
+    $wpdb->query("TRUNCATE TABLE " . $wpdb->prefix  . "viberent_tbl_product");
 }
