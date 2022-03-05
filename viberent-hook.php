@@ -14,8 +14,7 @@ function vibrentLogin_template_as_option($page_templates, $theme, $post)
 add_filter('template_include', 'vibrentLogin_load_template', 99);
 function vibrentLogin_load_template($template)
 {
-    global $post;
-    global $wpdb;
+    global $post, $wpdb;
     $postId = isset($post->ID) ? sanitize_text_field($post->ID) : "";
     $custom_template_slug = "";
     $cart_template_slug = "";
