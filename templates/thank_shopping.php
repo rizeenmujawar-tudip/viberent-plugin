@@ -43,7 +43,7 @@ if (isset($_SESSION["cart_item"])) {
     } else {
       $myquanti = $item["productAvailble"];
     }
-    $responseperiod = wp_remote_get('https://viberent-api.azurewebsites.net/api/item/rental-periodtype?companyid=' . $companyID, $api_args);
+    $responseperiod = wp_remote_get($viberent_api_url . 'item/rental-periodtype?companyid=' . $companyID, $api_args);
     if (is_wp_error($responseperiod) || wp_remote_retrieve_response_code($responseperiod) != 200) {
       return false;
     }
@@ -59,9 +59,9 @@ if (isset($_SESSION["cart_item"])) {
   }
   $resulty = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_post_array WHERE `custoname` IS NOT NULL");
   if (!empty($resulty)) {
-    $data = array('customerName' => $resulty[0]->custoname, 'companyid' => $resulty[0]->companyID, "billingAddresses" => array("isBilling" => true, "addressType" => "BillTo", "billAddrDtls" => $resulty[0]->billing_address, "city" => $resulty[0]->city_bill, "state" => $resulty[0]->state_bill, "postalCode" => $resulty[0]->postalCode_bill, "country" => $resulty[0]->country_bill, "email" => $resulty[0]->email_bill, "phone" => $resulty[0]->phone_bill, "contactName" => $resulty[0]->custoname), "shipingAddresses" => array("isBilling" => true, "addressType" => "ShipTo", "billAddrDtls" => $resulty[0]->shipping_address, "city" => $resulty[0]->city_bill, "state" => $resulty[0]->state_ship, "postalCode" => $resulty[0]->postalCode_ship, "country" => $resulty[0]->country_ship, "email" => $resulty[0]->email_ship, "phone" => $resulty[0]->phone_ship, "contactName" => $resulty[0]->custoname), "items" => $all_items);
+    $data = array('customerName' => $resulty[0]->custoname, 'companyid' => $resulty[0]->companyID, "billingAddresses" => array("isBilling" => true, "addressType" => "BillTo", "billAddrDtls" => $resulty[0]->billing_address, "city" => $resulty[0]->city_bill, "state" => $resulty[0]->state_bill, "postalCode" => $resulty[0]->postalCode_bill, "country" => $resulty[0]->country_bill, "email" => $resulty[0]->email_bill, "phone" => $resulty[0]->phone_bill, "contactName" => $resulty[0]->custoname), "shipingAddresses" => array("isBilling" => true, "addressType" => "ShipTo", "billAddrDtls" => $resulty[0]->shipping_address, "city" => $resulty[0]->city_ship, "state" => $resulty[0]->state_ship, "postalCode" => $resulty[0]->postalCode_ship, "country" => $resulty[0]->country_ship, "email" => $resulty[0]->email_ship, "phone" => $resulty[0]->phone_ship, "contactName" => $resulty[0]->custoname), "items" => $all_items);
 
-    $curlUrl = wp_remote_post('https://viberent-api.azurewebsites.net/api/Quote/create', array(
+    $curlUrl = wp_remote_post($viberent_api_url . 'Quote/create', array(
       'headers'     => array('Content-Type' => 'application/json; charset=utf-8', 'ApiKey' => $apikey, 'CompanyId' => $companyID),
       'body'        => json_encode($data),
       'method'      => 'POST',
@@ -87,15 +87,15 @@ if (isset($_SESSION["cart_item"])) {
       $result = $wpdb->get_results("SELECT QuoteNumber from " . $wpdb->prefix . "quote_number WHERE `id` IS NOT NULL");
       if (isset($result[0]->QuoteNumber)) { ?>
         <p>Please note your Quote Number for future reference</p><?php
-        echo "<h3><b>Your Quote Number </b><span style='font-weight:normal;display:block'>";
+        echo "<h3><b>Your Quote Number </b><span class='vibe_quote_num'>";
         echo $result[0]->QuoteNumber . "</span></h3";
         $wpdb->query("TRUNCATE TABLE " . $wpdb->prefix  . "quote_number");
         unset($_SESSION["cart_item"]);
-        $wpdb->query("TRUNCATE TABLE " . $wpdb->prefix  . "tbl_product");
+        $wpdb->query("TRUNCATE TABLE " . $wpdb->prefix  . "viberent_tbl_product");
         $wpdb->query("TRUNCATE TABLE " . $wpdb->prefix  . "viberent_post_array");
       }
-        $resuli = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
-        $slug_name = sanitize_title($resuli[0]->pagename);
+        $viberent_mypagename = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
+        $slug_name = sanitize_title($viberent_mypagename[0]->pagename);
     ?>
   </div>
     <div id="continue_btn">
