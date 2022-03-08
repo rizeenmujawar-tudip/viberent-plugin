@@ -121,7 +121,7 @@ if (isset($_SESSION["cart_item"])) {
 <div class="viberent_place_order">
 <div class="container pt-3">
   <div class="d-flex justify-content-between p-0 m-0">
-      <a href="<?php echo site_url() . "/" . $slug_name; ?>">
+      <a href="<?php echo site_url() . "/my-cart/" ?>">
           <i class="viberent_back_button fas fa-arrow-circle-left fa-stack-2x text-left"></i>
       </a>
       <a class="btn_mycart" href="<?php echo site_url() . "/my-cart/" ?>">
@@ -131,7 +131,7 @@ if (isset($_SESSION["cart_item"])) {
       </a>
   </div>
   <h3 class="text-center m-0" id="delivery_heading">Delivery Details</h3>
-  <input type="hidden" id="totalQuantity" value="<?php echo $cart_count; ?>">
+  <input type="hidden" id="totalQuantity" value="<?php echo esc_attr($cart_count); ?>">
   <div class="container mx-auto mb-5" id="orderDet_div">
     <form method="post" class="placeOrderForm p-4" id="placeOrderForm">
       <div class="row field">
@@ -694,7 +694,7 @@ if (isset($_SESSION["cart_item"])) {
     <div class="viberent_place_order_2 no-records py-5 text-center">
         <p>Your Cart is Empty!</p>
         <p>Please add items to place an enquiry</p>
-      <a href="<?php echo site_url() . "/" . $slug_name; ?>" class="viberent_shop_now text-center text-white m-auto btn btn-primary border-0 h4 p-1 px-3 rounded">Shop Now</a>
+      <a href="<?php echo esc_url(site_url() . "/" . $slug_name); ?>" class="viberent_shop_now text-center text-white m-auto btn btn-primary border-0 h4 p-1 px-3 rounded">Shop Now</a>
     </div>
 </div>
 </div>
