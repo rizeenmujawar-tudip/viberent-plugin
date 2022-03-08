@@ -380,7 +380,7 @@ get_header();
                         } else if ($dateFormatfromAPi == "MM-dd-yyyy") {
                             $dateFormat = "m-j-Y";
                         }
-                        $curlcatwise = wp_remote_get($viberent_api_url . 'Item/item-list?&companyid=' . $companyID . '&pageSize=10&pageNumber=' . $page_no_cat . '&subcategory=' . $_GET['category'], $api_args);
+                        $curlcatwise = wp_remote_get($viberent_api_url . 'Item/item-list?&companyid=' . $companyID . '&pageSize=10&pageNumber=' . $page_no_cat . '&subcategory=' . sanitize_text_field($_GET['category']), $api_args);
 
                         if (is_wp_error($curlcatwise) || wp_remote_retrieve_response_code($curlcatwise) != 200) {
                             return false;
@@ -535,7 +535,7 @@ get_header();
                                                             <input type="hidden" class="endDate" name="end-date" value="<?php echo esc_attr($end_to_date); ?>" />
                                                             <input type="hidden" class="sessionID" name="sessionID" value="<?php echo trim($retrieved_datas['itemGUID'] . $rentalPeriod); ?>" />
                                                             <input type="number" class="product-quantity" name="quantity" min="1" value="1" size="2" />
-                                                            <img src="<?php echo plugins_url(); ?>/viberent/assets/images/loading.gif" class="loading" />
+                                                            <img src="<?php echo plugin_dir_url('loading.gif', __FILE__); ?>viberent/assets/images/loading.gif" class="loading" />
                                                             <input type="submit" name="add_to_cart" value="Add to Cart" class="btnAddAction" />
                                                         </div>
                                                     </div>
@@ -558,7 +558,7 @@ get_header();
                                                     <?php
                                                     }
                                                     if ($count > 0) {
-                                                        echo "<div class='itemQuantityAvailablediv'><b>" . $count . " item(s) added to cart</b></bb></div>";
+                                                        echo "<div class='itemQuantityAvailablediv'><b>" . esc_html($count) . " item(s) added to cart</b></bb></div>";
                                                     }
                                                     ?>
                                                 </div>
@@ -638,7 +638,7 @@ get_header();
                                     $start_from_date = date("Y-m-d");
                                     $end_to_date = date("Y-m-d", strtotime($firstRental_showValue));
                                 }
-                                echo sanitize_text_field($show_from_date) . " - " . sanitize_text_field($show_to_date);
+                                echo esc_html($show_from_date . " - " . $show_to_date);
                                 ?>
                             </span> </h5>
                         <?php
@@ -709,9 +709,9 @@ get_header();
                                                         $i = 1;
                                                         foreach ($retrieved_data["rentalRates"] as $rentalRate) {
                                                             if ($rentalRate['rentalratesName'] == $firstRental_period) {
-                                                                echo $currencysymbol;
-                                                                echo $rentalRate['rentalratesvalue'];
-                                                                echo " : " . $firstRental_period;
+                                                                echo esc_html($currencysymbol);
+                                                                echo esc_html($rentalRate['rentalratesvalue']);
+                                                                echo " : " . esc_html($firstRental_period);
                                                                 $is_daily = 1;
                                                                 if ($i == 1) {
                                                             ?>
@@ -763,7 +763,7 @@ get_header();
                                                 <input type="hidden" class="endDate" name="end-date" value="<?php echo esc_attr($end_to_date); ?>" />
                                                 <input type="hidden" class="sessionID" name="sessionID" value="<?php echo trim($retrieved_data['itemGUID'] . $rentalPeriod); ?>" />
                                                 <input type="number" class="product-quantity" name="quantity" min="1" value="1" size="2" />
-                                                <img src="<?php echo plugins_url(); ?>/viberent/assets/images/loading.gif" class="loading" />
+                                                <img src="<?php echo plugin_dir_url('loading.gif', __FILE__); ?>viberent/assets/images/loading.gif" class="loading" />
                                                 <input type="submit" name="add_to_cart" value="Add to Cart" class="btnAddAction" />
                                             </div>
                                             <div class="product-quantity-message">
@@ -785,7 +785,7 @@ get_header();
                                                 <?php
                                                 }
                                                 if ($count > 0) {
-                                                    echo "<div class='itemQuantityAvailablediv'><b>" . $count . " item(s) added to cart</b></bb></div>";
+                                                    echo "<div class='itemQuantityAvailablediv'><b>" . esc_html($count) . " item(s) added to cart</b></bb></div>";
                                                 }
                                                 ?>
                                             </div>
