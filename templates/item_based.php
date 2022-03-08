@@ -428,7 +428,7 @@ get_header();
 										</p>
 										<div class="add-to-cart-component buy-items-btn ng-star-inserted">
 											<input type="number" class="product-quantity" name="quantity" min="1" value="1" size="2" />
-											<img src="<?php echo plugins_url(); ?>/viberent/assets/images/loading.gif" class="loading" />
+											<img src="<?php echo plugin_dir_url('loading.gif', __FILE__); ?>viberent/assets/images/loading.gif" class="loading" />
 											<input type="submit" name="add_to_cart" value="Add to Cart" class="btnAddAction" />
 										</div>
 										<div class="product-quantity-message">
@@ -449,7 +449,7 @@ get_header();
 											<?php
 											}
 											if ($count > 0) {
-												echo "<div class='itemQuantityAvailablediv'><b>" . $count . " item(s) added to cart</b></bb></div>";
+												echo "<div class='itemQuantityAvailablediv'><b>" . esc_html($count) . " item(s) added to cart</b></bb></div>";
 											}
 											?>
 										</div>
