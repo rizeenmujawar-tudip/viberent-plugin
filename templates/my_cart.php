@@ -46,7 +46,7 @@ if (!empty($_GET["action"])) {
                 foreach ($_SESSION["cart_item"] as $k => $v) {
                     if ($_GET["sessionID"] == $k)
                         unset($_SESSION["cart_item"][$k]);
-                    $delete_id = trim($_GET["sessionID"]);
+                    $delete_id = trim(sanitize_text_field($_GET["sessionID"]));
                     $wpdb->delete($wpdb->prefix . 'viberent_tbl_product', array('sessionID' => $delete_id));
                     if (empty($_SESSION["cart_item"]))
                         unset($_SESSION["cart_item"]);
@@ -65,7 +65,7 @@ $slug_name = sanitize_title($viberent_mypagename[0]->pagename);
 <div class="viberent_my_cart">
     <div class="cart_page container-fluid m-0 pt-3" id="shopping-cart">
         <div class="d-flex justify-content-between">
-            <a href="<?php echo site_url() . "/" . $slug_name; ?>">
+            <a href="<?php echo esc_url(site_url() . "/" . $slug_name); ?>">
                 <i class="viberent_back_button fas fa-arrow-circle-left fa-stack-2x text-left"></i>
             </a>
             <div id="empty_cart">
@@ -155,8 +155,8 @@ $slug_name = sanitize_title($viberent_mypagename[0]->pagename);
                                 <p class="my-auto"><?php echo esc_html($item["product_name"]); ?></p>
                             </td>
                             <td class="text-left"><?php echo esc_html($item["rental_period"]); ?></td>
-                            <td class="text-left"><?php echo date($dateFormat, strtotime($item["startDate"])); ?></td>
-                            <td class="text-left"><?php echo date($dateFormat, strtotime($item["endDate"])); ?></td>
+                            <td class="text-left"><?php echo esc_html(date($dateFormat, strtotime($item["startDate"]))); ?></td>
+                            <td class="text-left"><?php echo esc_html(date($dateFormat, strtotime($item["endDate"]))); ?></td>
                             <td class="text-right item-row">
                                 <form class="viberent_cart_quantity" action="<?php echo site_url() . "/my-cart/"; ?>" method="post">
                                     <input type='hidden' value="<?php echo esc_attr($item['sessionID']); ?>" name='sessionID'>
@@ -168,7 +168,7 @@ $slug_name = sanitize_title($viberent_mypagename[0]->pagename);
                             <td class="text-right"><?php echo esc_html($respavail[0]["periodUnits"]); ?></td>
                             <td class="text-right"><?php echo esc_html($currencysymbol . " " . $item["price"]); ?></td>
                             <td class="text-right"><?php echo esc_html($currencysymbol . " " . number_format($item_price, 2)); ?></td>
-                            <td class="text-center"><a href='#' class="btnRemoveAction" onclick="confirmAction('<?php echo $item['sessionID']; ?>')"><img src="<?php echo plugins_url(); ?>/viberent/assets/images/icon-delete.png" alt="Remove Item" /></a></td>
+                            <td class="text-center"><a href='#' class="btnRemoveAction" onclick="confirmAction('<?php echo esc_js($item['sessionID']); ?>')"><img src="<?php echo plugin_dir_url('icon-delete.png', __FILE__); ?>viberent/assets/images/icon-delete.png" alt="Remove Item" /></a></td>
                         </tr>
                     <?php
                         (int)$total_quantity += (int)$productAvailable;
@@ -182,7 +182,7 @@ $slug_name = sanitize_title($viberent_mypagename[0]->pagename);
                         <td class="text-right"><?php echo esc_html($total_quantity); ?></td>
                         <td></td>
                         <td></td>
-                        <td colspan="1" class="text-right"><strong><?php echo $currencysymbol . " " . number_format($total_price, 2); ?></strong></td>
+                        <td colspan="1" class="text-right"><strong><?php echo esc_html($currencysymbol) . " " . number_format($total_price, 2); ?></strong></td>
                     </tr>
                 </tbody>
             </table>
