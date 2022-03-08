@@ -105,7 +105,7 @@ if (isset($_POST["add_to_cart"]) && $_GET["action"] && isset($_GET["GUID"]) && i
         "endDate" => sanitize_text_field($_POST["end-date"]),
         "sessionID" => sanitize_text_field($_POST["sessionID"])
     );
-    $results = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "viberent_tbl_product WHERE GUID ='" . $_GET["GUID"] . "' AND rental_period='" . $_GET["rental_period"] . "'");
+    $results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "viberent_tbl_product WHERE GUID ='" . sanitize_text_field($_GET["GUID"]) . "' AND rental_period='" . sanitize_text_field($_GET["rental_period"]) . "'"));
     $GUID = array();
     $rentalPeriod = array();
     foreach ($results as $val) {
@@ -113,14 +113,14 @@ if (isset($_POST["add_to_cart"]) && $_GET["action"] && isset($_GET["GUID"]) && i
         $rentalPeriod = sanitize_text_field($val->rental_period);
     }
     if ($GUID != $_GET["GUID"] || $rentalPeriod != $_GET["rental_period"]) {
-        $wpdb->insert($wpdb->prefix . 'viberent_tbl_product', $item_layout);
+        $wpdb->insert( $wpdb->prepare( $wpdb->prefix . 'viberent_tbl_product', $item_layout));
     }
 }
 if (!empty($_GET["action"])) {
     switch ($_GET["action"]) {
         case "add":
             if (!empty($_POST["quantity"])) {
-                $productByCode = $wpdb->get_results("SELECT * FROM " . $wpdb->prefix . "viberent_tbl_product WHERE GUID='" . $_GET["GUID"] . "' AND rental_period='" . $_GET["rental_period"] . "'");
+                $productByCode = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "viberent_tbl_product WHERE GUID='" . sanitize_text_field($_GET["GUID"]) . "' AND rental_period='" . sanitize_text_field($_GET["rental_period"]) . "'"));
                 $itemArray = array($productByCode[0]->sessionID => array(
                     'product_name' => $productByCode[0]->product_name,
                     'code' => $productByCode[0]->code,
