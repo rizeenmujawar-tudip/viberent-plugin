@@ -88,7 +88,7 @@ if (isset($_SESSION["cart_item"])) {
       if (isset($result[0]->QuoteNumber)) { ?>
         <p>Please note your Quote Number for future reference</p><?php
         echo "<h3><b>Your Quote Number </b><span class='vibe_quote_num'>";
-        echo $result[0]->QuoteNumber . "</span></h3";
+        echo esc_html($result[0]->QuoteNumber) . "</span></h3";
         $wpdb->query("TRUNCATE TABLE " . $wpdb->prefix  . "quote_number");
         unset($_SESSION["cart_item"]);
         $wpdb->query("TRUNCATE TABLE " . $wpdb->prefix  . "viberent_tbl_product");
@@ -99,7 +99,7 @@ if (isset($_SESSION["cart_item"])) {
     ?>
   </div>
     <div id="continue_btn">
-      <a href="<?php echo site_url() . "/" . $slug_name; ?>" id="btn_shop_now">Continue Shopping</a>
+      <a href="<?php echo esc_url(site_url() . "/" . $slug_name); ?>" id="btn_shop_now">Continue Shopping</a>
     </div>
   </div>
 </div>
