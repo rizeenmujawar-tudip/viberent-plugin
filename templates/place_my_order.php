@@ -14,7 +14,7 @@ get_header();
   });
 </script>
 <?php
-$query = $_GET;
+$query = sanitize_post($_GET);
 $query_result = http_build_query($query);
 if (isset($_GET['pageno'])) {
   $page_no_cat = sanitize_text_field($_GET['pageno']);
