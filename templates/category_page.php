@@ -1,6 +1,6 @@
 <?php
 global $wpdb;
-$query = $_GET;
+$query = sanitize_post($_GET);
 $full_path = explode('templates', plugin_dir_url(__FILE__));
 array_pop($full_path);
 $full_path = implode('templates', $full_path); 
@@ -117,7 +117,7 @@ if (isset($_POST["add_to_cart"]) && $_GET["action"] && isset($_GET["GUID"]) && i
     }
 }
 if (!empty($_GET["action"])) {
-    switch ($_GET["action"]) {
+    switch (sanitize_text_field($_GET["action"])) {
         case "add":
             if (!empty($_POST["quantity"])) {
                 $productByCode = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "viberent_tbl_product WHERE GUID='" . sanitize_text_field($_GET["GUID"]) . "' AND rental_period='" . sanitize_text_field($_GET["rental_period"]) . "'"));
