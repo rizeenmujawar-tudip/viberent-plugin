@@ -14,7 +14,7 @@ get_header();
     });
 </script>
 <?php
-$query = $_GET;
+$query = sanitize_post($_GET);
 $query_result = http_build_query($query);
 if (isset($_GET['pageno'])) {
     $page_no_cat = sanitize_text_field($_GET['pageno']);
@@ -28,7 +28,7 @@ $rental_period = isset($_POST['rental_period']) ? sanitize_text_field($_POST['re
 $session_ID = isset($_POST['sessionID']) ? sanitize_text_field($_POST['sessionID']) : "";
 $productByCode = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_tbl_product WHERE sessionID='" . $session_ID . "'");
 if ( !empty($_SESSION["cart_item"]) && isset($_POST['sessionID']) ) {
-    foreach ($_SESSION["cart_item"] as $k => $v) {
+    foreach (sanitize_post($_SESSION["cart_item"]) as $k => $v) {
         if ($productByCode[0]->sessionID == $k) {
             if (empty($_SESSION["cart_item"][$k]["quantity"])) {
                 $_SESSION["cart_item"][$k]["quantity"] = 0;
@@ -40,11 +40,11 @@ if ( !empty($_SESSION["cart_item"]) && isset($_POST['sessionID']) ) {
     }
 }
 if (!empty($_GET["action"])) {
-    switch ($_GET["action"]) {
+    switch (sanitize_text_field($_GET["action"])) {
         case "remove":
             if (!empty($_SESSION["cart_item"])) {
-                foreach ($_SESSION["cart_item"] as $k => $v) {
-                    if ($_GET["sessionID"] == $k)
+                foreach (sanitize_post($_SESSION["cart_item"]) as $k => $v) {
+                    if (sanitize_text_field($_GET["sessionID"]) == $k)
                         unset($_SESSION["cart_item"][$k]);
                     $delete_id = trim(sanitize_text_field($_GET["sessionID"]));
                     $wpdb->delete($wpdb->prefix . 'viberent_tbl_product', array('sessionID' => $delete_id));
