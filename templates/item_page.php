@@ -1,6 +1,6 @@
 <?php
 global $wpdb;
-$query = $_GET;
+$query = sanitize_post($_GET);
 $full_path = explode('templates', plugin_dir_url(__FILE__));
 array_pop($full_path);
 $full_path = implode('templates', $full_path); 
