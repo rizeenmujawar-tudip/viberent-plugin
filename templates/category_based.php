@@ -452,7 +452,7 @@ get_header();
                                                             $is_present = 0;
                                                             $i = 1;
                                                             foreach ($retrieved_datas["rentalRates"] as $rentalRate) {
-                                                                if ($rentalRate['rentalratesName'] == $_POST["period"]) {
+                                                                if ($rentalRate['rentalratesName'] == sanitize_text_field($_POST["period"])) {
                                                                     echo esc_html($currencysymbol);
                                                                     echo esc_html($rentalRate['rentalratesvalue']);
                                                                     echo " : ";
@@ -586,7 +586,7 @@ get_header();
                             <div class="viberentPagination">
                                 <ul>
                                     <?php
-                                    $query = $_GET;
+                                    $query = sanitize_post($_GET);
                                     $pagLink_category = "";
                                     if ($total_pages_cat > 1) {
                                         if ($page_no_cat >= 2) {
@@ -809,7 +809,7 @@ get_header();
                         <div class="viberentPagination">
                             <ul>
                                 <?php
-                                $query = $_GET;
+                                $query = sanitize_post($_GET);
                                 $pagLink = "";
                                 if ($total_pages > 1) {
                                     if ($page_nos >= 2) {
