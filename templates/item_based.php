@@ -512,7 +512,7 @@ get_header();
 					<div class="viberentPagination">
 						<ul>
 						<?php
-						$query = $_GET;
+						$query = sanitize_post($_GET);
 						$pagLink = "";
 						if ($total_pages > 1) {
 							if ($page_nos >= 2) {
