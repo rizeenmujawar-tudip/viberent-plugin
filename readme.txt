@@ -5,7 +5,7 @@ Author URI: https://github.com/rizeenmujawar-tudip/viberent-plugin
 Plugin URI: https://wordpress.org/plugins/login-to-viberent
 Tags: viberent, login to viberent, ecommerce, quote, quotation, add to cart, place order, category, available, availability, rental period, dates, from, to, page number, api, booking
 Requires at least: 5.0
-Tested up to: 5.8
+Tested up to: 5.9.2
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv3
