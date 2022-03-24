@@ -35,8 +35,8 @@ function viberent_init()
     $charset_collate = $wpdb->get_charset_collate();
     require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 
-    $table_name = $wpdb->prefix . 'viberent_clients_company_info';
-    $sql = "CREATE TABLE $table_name (
+    $viberent_table_name = $wpdb->prefix . 'viberent_clients_company_info';
+    $sql = "CREATE TABLE $viberent_table_name (
     companyID INTEGER NOT NULL,
     companyName TEXT NOT NULL,
     useName TEXT NOT NULL,
@@ -127,12 +127,16 @@ function viberent_init()
     PRIMARY KEY (id)
   ) $charset_collate;";
     dbDelta($sql);
+        
+$result = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_clients_company_info");
+$viberent_mylayout = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_layout");
+$viberent_mypagename = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
 ?>
 <div id="full_page_viberent_plugin">
     <div>
         <form method="post" id="viberent_plugin_login_form">
             <div class="viberent_login_logo">
-                <img id="viberent_logo" src="<?php echo plugin_dir_url(__FILE__) . 'assets/images/VibeRent-LOGO.png'; ?>">
+                <img id="viberent_logo" src="<?php echo esc_url( plugin_dir_url(__FILE__) . 'assets/images/VibeRent-LOGO.png' ); ?>">
             </div>
             <div id="LoginForm" class="container">
                 <h3>LOGIN</h3>
@@ -153,37 +157,34 @@ function viberent_init()
             }, 1500);
         </script>
         <?php
-        $result = $wpdb->get_results("SELECT * from $table_name");
-        $chooseLayout = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_layout");
-        if (isset($chooseLayout[0])) {
-            $chooseLayout = $chooseLayout[0]->selected_layout;
+        if (isset($viberent_mylayout[0])) {
+            $viberent_mylayout = $viberent_mylayout[0]->selected_layout;
         }
-        $chooseLayout = isset($_POST['chosen_layout']) ? (sanitize_text_field($_POST['chosen_layout'])) : sanitize_text_field($chooseLayout);
+        $viberent_mylayout = isset($_POST['chosen_layout']) ? (sanitize_text_field($_POST['chosen_layout'])) : sanitize_text_field($viberent_mylayout);
         echo "<b>Company Name:</b> ";
-        echo sanitize_text_field($result[0]->companyName);
+        echo esc_html($result[0]->companyName);
         ?>
         <form method="post" id="layout_options_form" name="layout_options_form">
             <p id="plz_choos_layout">Please choose the layout for your shop:</p>
             <div id="layout_options">
                 <div>
-                    <input type="radio" id="radio_item_based" name="chosen_layout" value="item-based" <?php if ($chooseLayout == 'item-based') { echo "checked"; } ?>>
+                    <input type="radio" id="radio_item_based" name="chosen_layout" value="item-based" <?php if ($viberent_mylayout == 'item-based') { echo "checked"; } ?>>
                     <label for="radio_item_based">
                         Item-based listing
-                        <img id="layout_option_img" src="<?php echo plugin_dir_url(__FILE__) . 'assets/images/item.png'; ?>">
+                        <img id="layout_option_img" src="<?php echo esc_url( plugin_dir_url(__FILE__) . 'assets/images/item.png' ); ?>">
 
                     </label>
                 </div>
                 <div>
-                    <input type="radio" id="radio_category_based" name="chosen_layout" value="category-based" <?php if ($chooseLayout == 'category-based') { echo "checked"; } ?>>
+                    <input type="radio" id="radio_category_based" name="chosen_layout" value="category-based" <?php if ($viberent_mylayout == 'category-based') { echo "checked"; } ?>>
                     <label for="radio_category_based">
                         Category-based listing
-                        <img id="layout_option_img" src="<?php echo plugin_dir_url(__FILE__) . 'assets/images/category.png'; ?>">
+                        <img id="layout_option_img" src="<?php echo esc_url( plugin_dir_url(__FILE__) . 'assets/images/category.png' ); ?>">
                     </label>
                 </div>
             </div>
             <label for="pagename"></label>
             <?php
-            $viberent_mypagename = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
             if (empty($viberent_mypagename)) {
             ?>
                 <input type="text" id="pagename" class="viberent_pagename" name="pagename" placeholder="Enter the page name for your shop here" required>
@@ -199,7 +200,6 @@ function viberent_init()
         </form>
         <?php
         $viberent_mylayout = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_layout");
-        $viberent_mypagename = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
         if (!empty($viberent_mylayout)) {
             if (!empty($viberent_mypagename)) {
                 $page_id_one = viberent_create_page('My cart');
@@ -221,7 +221,6 @@ function viberent_init()
         }
     }
     if (isset($_POST["logout"])) {
-        $viberent_mypagename = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
         $page_id = viberent_get_page_id_by_title($viberent_mypagename[0]->pagename, $post_type = 'page');
         $page_id_one = viberent_get_page_id_by_title('My cart', $post_type = 'page');
         $page_id_two = viberent_get_page_id_by_title('Place my order', $post_type = 'page');
@@ -251,7 +250,6 @@ function viberent_init()
         );
         if (isset($resp["companyID"])) {
             $num_of_rows = $wpdb->get_results("SELECT companyID from " . $wpdb->prefix . "viberent_clients_company_info WHERE `companyID` IS NOT NULL");
-            $chooseLayout = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_layout");
             if (count($num_of_rows) == 0) {
                 $wpdb->insert($wpdb->prefix . 'viberent_clients_company_info', $resp);
                 $wpdb->insert($wpdb->prefix . 'viberent_apikey', $mypassword);
@@ -263,29 +261,29 @@ function viberent_init()
                     }, 1500);
                 </script>
                 <?php
-                $result = $wpdb->get_results("SELECT * from $table_name");
-                if (isset($chooseLayout[0])) {
-                    $chooseLayout = $chooseLayout[0]->selected_layout;
+                $result = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_clients_company_info");
+                if (isset($viberent_mylayout[0])) {
+                    $viberent_mylayout = $viberent_mylayout[0]->selected_layout;
                 }
-                $chooseLayout = isset($_POST['chosen_layout']) ? sanitize_text_field($_POST['chosen_layout']) : sanitize_text_field($chooseLayout);
+                $viberent_mylayout = isset($_POST['chosen_layout']) ? sanitize_text_field($_POST['chosen_layout']) : sanitize_text_field($viberent_mylayout);
                 echo "<b>Company Name:</b> ";
-                echo sanitize_text_field($result[0]->companyName);
+                echo esc_html($result[0]->companyName);
                 ?>
                 <form method="post" id="layout_options_form">
                     <p>Please choose the layout for your shop:</p>
                     <div id="layout_options">
                         <div>
-                            <input type="radio" id="radio_item_based" name="chosen_layout" value="item-based" <?php if ($chooseLayout == 'item-based') { echo "checked"; } ?>>
+                            <input type="radio" id="radio_item_based" name="chosen_layout" value="item-based" <?php if ($viberent_mylayout == 'item-based') { echo "checked"; } ?>>
                             <label for="radio_item_based">
                                 Item-based listing
-                                <img id="layout_option_img" src="<?php echo plugin_dir_url(__FILE__) . 'assets/images/item.png'; ?>">
+                                <img id="layout_option_img" src="<?php echo esc_url( plugin_dir_url(__FILE__) . 'assets/images/item.png' ); ?>">
                             </label>
                         </div>
                         <div>
-                            <input type="radio" id="radio_category_based" name="chosen_layout" value="category-based" <?php if ($chooseLayout == 'category-based') { echo "checked";} ?>>
+                            <input type="radio" id="radio_category_based" name="chosen_layout" value="category-based" <?php if ($viberent_mylayout == 'category-based') { echo "checked";} ?>>
                             <label for="radio_category_based">
                                 Category-based listing
-                                <img id="layout_option_img" src="<?php echo plugin_dir_url(__FILE__) . 'assets/images/category.png'; ?>">
+                                <img id="layout_option_img" src="<?php echo esc_url( plugin_dir_url(__FILE__) . 'assets/images/category.png' ); ?>">
                             </label>
                         </div>
                     </div>
@@ -298,9 +296,8 @@ function viberent_init()
                 </form>
         <?php
             }
-            $viberent_mylayout = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_layout");
-            $viberent_mypagename = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
             if (!empty($viberent_mylayout)) {
+                $viberent_mylayout = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_layout");
                 if (!empty($viberent_mypagename)) {
                     $page_id_one = viberent_create_page('My cart');
                     update_post_meta($page_id_one, '_wp_page_template', 'templates/my_cart.php');
@@ -323,11 +320,9 @@ function viberent_init()
         }
     }
     if (isset($_POST["radio_layout_submit"])) {
-        $resul = $wpdb->get_results("SELECT * from $table_name");
-        $viberent_mylayout = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_layout");
         $item_layout = array(
-            "companyID" => $resul[0]->companyID,
-            "useName" => $resul[0]->useName,
+            "companyID" => $result[0]->companyID,
+            "useName" => $result[0]->useName,
             "selected_layout" => sanitize_text_field($_POST["chosen_layout"])
         );
         if (empty($viberent_mylayout)) {
@@ -338,8 +333,8 @@ function viberent_init()
         }
         if (isset($_POST["pagename"])) {
             $mypagearr = array(
-                "companyID" => $resul[0]->companyID,
-                "useName" => $resul[0]->useName,
+                "companyID" => $result[0]->companyID,
+                "useName" => $result[0]->useName,
                 "pagename" => sanitize_text_field($_POST["pagename"])
             );
             $wpdb->insert($wpdb->prefix . 'viberent_pagename', $mypagearr);
@@ -353,12 +348,11 @@ function viberent_init()
     $rows = $wpdb->get_results("SELECT companyID from " . $wpdb->prefix . "viberent_layout WHERE `companyID` IS NOT NULL");
     $my_selected_layout = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_layout WHERE `companyID` IS NOT NULL");
     if (count($rows) != 0) {
-        $viberent_mypagename = $wpdb->get_results("SELECT * from " . $wpdb->prefix . "viberent_pagename");
         if (!empty($viberent_mypagename)) {
             $slug_name = sanitize_title($viberent_mypagename[0]->pagename);
         ?>
             <div id="chosen_message">
-                <a href="<?php echo site_url() . "/" . $slug_name; ?>" type="button" target="_blank" id="change_selected_layout" name="change_selected_layout">Go to the <?php echo $my_selected_layout[0]->selected_layout; ?> layout </a>
+                <a href="<?php echo esc_url( site_url() . "/" . $slug_name ); ?>" type="button" target="_blank" id="change_selected_layout" name="change_selected_layout">Go to the <?php echo esc_html( $my_selected_layout[0]->selected_layout ); ?> layout </a>
             </div>
     <?php
         }
