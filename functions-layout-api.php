@@ -366,7 +366,7 @@ function viberent_register_styles()
 {
     wp_register_style('fontawesome', plugins_url('assets/css/all.css', __FILE__));
     wp_register_style('customCss', plugins_url('assets/css/custom.css', __FILE__));
-    wp_register_style('Bootstrap', plugins_url('assets/css/bootstrap.min.css', __FILE__));
+    wp_register_style('Bootstrap', plugins_url('assets/css/bootstrap.css', __FILE__));
     wp_register_style('mycart', plugins_url('assets/css/my_cart.css', __FILE__));
     wp_register_style('PlaceOrder', plugins_url('assets/css/place_order.css', __FILE__));
     wp_register_style('thanks', plugins_url('assets/css/thank.css', __FILE__));
