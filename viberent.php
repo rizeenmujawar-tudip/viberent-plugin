@@ -19,7 +19,7 @@ function viberent_admin_scripts()
 {
   wp_register_style('viberent_style', plugins_url('assets/css/viberent.css', __FILE__));
   wp_enqueue_style('viberent_style');
-  wp_register_style('font-awesome', plugins_url('assets/css/font-awesome.min.css', __FILE__));
+  wp_register_style('font-awesome', plugins_url('assets/css/font-awesome.css', __FILE__));
   wp_enqueue_style('font-awesome');
 }
 add_action('admin_enqueue_scripts', 'viberent_admin_scripts');
