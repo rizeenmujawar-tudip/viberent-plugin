@@ -19,7 +19,7 @@ global $wpdb;
 if ( !empty($_SESSION["cart_item"]) && isset($_POST['sessionID']) && isset($_POST["viberent_cart_nonce"]) ) {
     wp_verify_nonce($_POST["viberent_cart_nonce"], 'viberent_cart_nonce');
     $session_ID = sanitize_text_field($_POST['sessionID']);
-    $productByCode = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix . "viberent_tbl_product WHERE sessionID='" . $session_ID . "'") );
+    $productByCode = $wpdb->get_results( $wpdb->prepare( "SELECT * from " . $wpdb->prefix . "viberent_tbl_product WHERE sessionID = %s", $session_ID ) );
     foreach (sanitize_post($_SESSION["cart_item"]) as $k => $v) {
         if ($productByCode[0]->sessionID == $k) {
             if (empty($_SESSION["cart_item"][$k]["quantity"])) {
