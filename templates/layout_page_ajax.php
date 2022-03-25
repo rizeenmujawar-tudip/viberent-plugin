@@ -48,7 +48,7 @@ function viberent_layoutBased_form()
 
     $actionReqest = sanitize_text_field($_POST['actionRequest']);
     $sessionId = sanitize_text_field($_POST['formData']['sessionID'] . $_POST['formData']['startDate']);
-    $results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "viberent_tbl_product WHERE sessionID ='" . $sessionId . "'") );
+    $results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "viberent_tbl_product WHERE sessionID = %s", $sessionId ) );
     $GUID = array();
     $rentalPeriod = array();
     foreach ($results as $val) {
@@ -79,7 +79,7 @@ function viberent_layoutBased_form()
     viberentCheckAction($actionReqest, $sessionId);
 
     $cartCount = is_array($_SESSION['cart_item']) ? count($_SESSION['cart_item']) : 0;
-    $productByCode = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "viberent_tbl_product WHERE sessionID='" . $sessionId . "'") );
+    $productByCode = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "viberent_tbl_product WHERE sessionID = %s", $sessionId ) );
     $count = 0;
     if (isset($_SESSION["cart_item"])) {
         foreach ($_SESSION["cart_item"] as $k => $item) {
@@ -103,7 +103,7 @@ function viberentCheckAction($action, $sessionId)
     if (!empty($action)) {
         switch ($action) {
             case "addToCart":
-                $productByCode = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "viberent_tbl_product WHERE sessionID='" . $sessionId . "'") );
+                $productByCode = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "viberent_tbl_product WHERE sessionID = %s", $sessionId ) );
                 $itemArray = array($productByCode[0]->sessionID => array(
                     'product_name' => $productByCode[0]->product_name,
                     'code' => $productByCode[0]->code,
