@@ -109,7 +109,7 @@ if ( isset($_POST["add_to_cart"]) && isset($_GET["action"]) && isset($_GET["GUID
         "endDate" => sanitize_text_field($_POST["end-date"]),
         "sessionID" => sanitize_text_field($_POST["sessionID"])
     );
-    $results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "viberent_tbl_product WHERE GUID ='" . sanitize_text_field($_GET["GUID"]) . "' AND rental_period='" . sanitize_text_field($_GET["rental_period"]) . "'"));
+    $results = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "viberent_tbl_product WHERE GUID = %s AND rental_period = %s", sanitize_text_field($_GET["GUID"]), sanitize_text_field($_GET["rental_period"]) ));
     $GUID = array();
     $rentalPeriod = array();
     foreach ($results as $val) {
@@ -125,7 +125,7 @@ if ( !empty($_GET["action"]) && isset($_POST["viberent_nonce"]) ) {
     switch (sanitize_text_field($_GET["action"])) {
         case "add":
             if (!empty($_POST["quantity"])) {
-                $productByCode = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "viberent_tbl_product WHERE GUID='" . sanitize_text_field($_GET["GUID"]) . "' AND rental_period='" . sanitize_text_field($_GET["rental_period"]) . "'"));
+                $productByCode = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM " . $wpdb->prefix . "viberent_tbl_product WHERE GUID = %s AND rental_period = %s", sanitize_text_field($_GET["GUID"]), sanitize_text_field($_GET["rental_period"]) ));
                 $itemArray = array($productByCode[0]->sessionID => array(
                     'product_name' => $productByCode[0]->product_name,
                     'code' => $productByCode[0]->code,
